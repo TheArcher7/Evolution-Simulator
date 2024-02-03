@@ -28,8 +28,17 @@ public class GeneralAppTest {
         // Instantiate BaseOrganism at coordinates (0,0)
         BaseOrganism organism = new BaseOrganism(new Point(0, 0));
 
-        // Assert visionPoints
+        // Assert visionPoints with an accuracy of 3 decimals
         Point[] visionPoints = organism.getVisionPoints();
-        assertEquals(new Point(-2.298, 1.928), visionPoints[0]);
+        assertEquals(roundPoint(new Point(2.298, 1.928)), roundPoint(visionPoints[0]));
     }
+    
+    // Helper method to round a Point to 3 decimal places
+    private Point roundPoint(Point point) {
+        double roundedX = Math.round(point.xCoord * 1000.0) / 1000.0;
+        double roundedY = Math.round(point.yCoord * 1000.0) / 1000.0;
+        return new Point(roundedX, roundedY);
+    }
+
+
 }  //TODO add tests

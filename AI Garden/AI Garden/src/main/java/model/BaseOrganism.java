@@ -159,6 +159,7 @@ public class BaseOrganism {
 
     public void setPhiVisionDirection(double[] phiVisionDirection) {
         this.phiVisionDirection = phiVisionDirection;
+        updateVisionPoints();
     }
 
     public double getVisionRadius() {
@@ -167,6 +168,7 @@ public class BaseOrganism {
 
     public void setVisionRadius(double visionRadius) {
         this.visionRadius = visionRadius;
+        updateVisionPoints();
     }
 
     public double getDeltaDirection() {
@@ -248,7 +250,7 @@ public class BaseOrganism {
     // Method to update visionPoints based on position, visionRadius, and phiVisionDirection
     public void updateVisionPoints() {
         for (int i = 0; i < phiVisionDirection.length; i++) {
-            double phi = Math.toRadians(phiVisionDirection[i] - thetaDirection);
+            double phi = Math.toRadians(thetaDirection - phiVisionDirection[i]);
 
             double xCoord = position.xCoord + (visionRadius * Math.cos(phi));
             double yCoord = position.yCoord + (visionRadius * Math.sin(phi));
