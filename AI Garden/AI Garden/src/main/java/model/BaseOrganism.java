@@ -2,6 +2,7 @@ package main.java.model;
 
 import main.java.util.Point;
 
+
 public class BaseOrganism {
     // Attributes
     private Point position;
@@ -17,53 +18,58 @@ public class BaseOrganism {
     private double weightNeededToReproduce;
 
     // Attributes for vision
-    private double phiDirection; //direction the creature is facing
-    private double deltaDirection; //the change of direction of the creature. Between -1 and 1
-    private double[] thetaVisionDirection; //the angles of the vision lines
-    private double visionRadius; //the distance the vision lines extend from the organism
+    private double thetaDirection; // direction in degrees the creature is facing
+    private double deltaDirection; // the change of direction of the creature. Between -1 and 1
+    private double[] phiVisionDirection; // the offset in degrees from the thetaDirection for each vision line
+    private double visionRadius; // the distance the vision lines extend from the organism
     private double size;
     private Point[] hitbox;
-
+    private Point[] visionPoints;
 
     // Constructor
-    public BaseOrganism(Point position, double weight, double maxEnergy) {
+    public BaseOrganism(Point position) {
         this.position = position;
-        this.weight = weight;
-        this.maxEnergy = maxEnergy;
-        this.energy = maxEnergy; // Start with full energy
+        weight = 12;
+        maxEnergy = 120;
+        energy = maxEnergy;// Start with full energy
+        age = 0;
+        maxAge = 120;
+        isAlive = true;
+        energyNeededToReproduce = 50;
+        weightNeededToReproduce = 20;
 
-        // Initialize hitbox
-        this.hitbox = new Point[4];
-        updateHitbox();
+        size = weight / 3;
+        thetaDirection = 90;
+        visionRadius = 3;
+        phiVisionDirection = new double[]{50.0, 35.0, 20.0, 10.0, 0, -10.0, -20.0, -35.0, -50.0};
+        initVision();
     }
 
     // Constructor 2
     public BaseOrganism(Point position, double weight, double maxEnergy,
-                        double phiDirection, double[] thetaVisionDirection, double visionRadius) {
+                        double thetaDirection, double[] phiVisionDirection, double visionRadius) {
         this.position = position;
         this.weight = weight;
         this.maxEnergy = maxEnergy;
         this.energy = maxEnergy;
-        this.phiDirection = phiDirection;
-        this.thetaVisionDirection = thetaVisionDirection;
+        this.thetaDirection = thetaDirection;
+        this.phiVisionDirection = phiVisionDirection;
         this.visionRadius = visionRadius;
 
-        // Initialize hitbox
-        this.hitbox = new Point[4];
-        updateHitbox();
+        initVision();
     }
 
     // Constructor 3
     public BaseOrganism(Point position, double weight, double maxEnergy,
-                        double phiDirection, double[] thetaVisionDirection, double visionRadius,
+                        double thetaDirection, double[] phiVisionDirection, double visionRadius,
                         int age, int maxAge, boolean isAlive,
                         double energyNeededToReproduce, double weightNeededToReproduce) {
         this.position = position;
         this.weight = weight;
         this.maxEnergy = maxEnergy;
         this.energy = maxEnergy;
-        this.phiDirection = phiDirection;
-        this.thetaVisionDirection = thetaVisionDirection;
+        this.thetaDirection = thetaDirection;
+        this.phiVisionDirection = phiVisionDirection;
         this.visionRadius = visionRadius;
         this.age = age;
         this.maxAge = maxAge;
@@ -71,12 +77,20 @@ public class BaseOrganism {
         this.energyNeededToReproduce = energyNeededToReproduce;
         this.weightNeededToReproduce = weightNeededToReproduce;
 
-        // Initialize hitbox
-        this.hitbox = new Point[4];
-        updateHitbox();
+        initVision();
     }
 
     // Additional methods for the organism's behavior could be added here
+
+    private void initVision() {
+        // Initialize hitbox
+        this.hitbox = new Point[4];
+        updateHitbox();
+
+        // Initialize visionPoints
+        this.visionPoints = new Point[phiVisionDirection.length];
+        updateVisionPoints();
+    }
 
     // Example method to simulate the organism consuming energy
     public void consumeEnergy(double amount) {
@@ -94,11 +108,7 @@ public class BaseOrganism {
         }
     }
 
-    //TODO add more methods
-
-
-
-
+    // TODO add more methods
 
     // Getter methods
     public Point getPosition() {
@@ -135,20 +145,20 @@ public class BaseOrganism {
     }
 
     // Getter and setter methods for vision attributes
-    public double getPhiDirection() {
-        return phiDirection;
+    public double getThetaDirection() {
+        return thetaDirection;
     }
 
-    public void setPhiDirection(double phiDirection) {
-        this.phiDirection = phiDirection;
+    public void setThetaDirection(double thetaDirection) {
+        this.thetaDirection = thetaDirection;
     }
 
-    public double[] getthetaVisionDirection() {
-        return thetaVisionDirection;
+    public double[] getPhiVisionDirection() {
+        return phiVisionDirection;
     }
 
-    public void setthetaVisionDirection(double[] thetaVisionDirection) {
-        this.thetaVisionDirection = thetaVisionDirection;
+    public void setPhiVisionDirection(double[] phiVisionDirection) {
+        this.phiVisionDirection = phiVisionDirection;
     }
 
     public double getVisionRadius() {
@@ -208,8 +218,6 @@ public class BaseOrganism {
         this.weightNeededToReproduce = weightNeededToReproduce;
     }
 
-
-
     public double getSize() {
         return size;
     }
@@ -217,6 +225,10 @@ public class BaseOrganism {
     public void setSize(double size) {
         this.size = size;
         updateHitbox();
+    }
+
+    public Point[] getHitbox() {
+        return hitbox;
     }
 
     // Method to update hitbox based on position and size
@@ -228,5 +240,22 @@ public class BaseOrganism {
         hitbox[2] = new Point(position.xCoord - hitboxSize, position.yCoord + hitboxSize);
         hitbox[3] = new Point(position.xCoord + hitboxSize, position.yCoord + hitboxSize);
     }
+
+    public Point[] getVisionPoints() {
+        return visionPoints;
+    }
+
+    // Method to update visionPoints based on position, visionRadius, and phiVisionDirection
+    public void updateVisionPoints() {
+        for (int i = 0; i < phiVisionDirection.length; i++) {
+            double phi = Math.toRadians(phiVisionDirection[i] - thetaDirection);
+
+            double xCoord = position.xCoord + (visionRadius * Math.cos(phi));
+            double yCoord = position.yCoord + (visionRadius * Math.sin(phi));
+
+            visionPoints[i] = new Point(xCoord, yCoord);
+        }
+    }
 }
+
 
