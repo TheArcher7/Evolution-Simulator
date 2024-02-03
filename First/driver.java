@@ -5,6 +5,22 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Random;
 
+import javax.swing.*;
+import java.awt.*;
+
+
+//http://www.jfree.org/jfreechart/
+/*
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
+*/
+
 /*
  * 
  * This will be a simple evolution simulator.
@@ -22,10 +38,11 @@ class driver{
         int x_gridSize = 100000;
         int y_gridSize = 100000;
         final int startingPopulation = 40;
-        final int simulationDays = 140; //2,000,000,000 number of days to simulate //TODO fix age simulation day bug
+        final int simulationDays = 140; //2,000,000,000 number of days to simulate
 
         double pelletEnergyAmount = 8000.0; //number of energy points each pellet has
-        int numPelletsEachDay = (x_gridSize * y_gridSize) / (x_gridSize + y_gridSize); //each day of the simulation will have the same number of pellets randomly distributed //in the future, maybe decrease number of pellets according to a function for better competition
+        int numPelletsEachDay = (x_gridSize * y_gridSize) / (x_gridSize + y_gridSize); 
+        //each day of the simulation will have the same number of pellets randomly distributed //in the future, maybe decrease number of pellets according to a function for better competition
 
         Random randGen = new Random();
         RabbitArrivalComparator ArriveOrder = new RabbitArrivalComparator();
@@ -46,7 +63,7 @@ class driver{
 
 
 
-        //begin the day
+        //begin the simulation
         int currDay = 0;
         do{
 
@@ -55,9 +72,11 @@ class driver{
                 p.rabbitsComingToPellet.clear();
             }
             for(Rabbit r: rabbitList){
-                //clearpellets
+
             }
+            //clearpellets
             pelletList.clear();
+            
             //randomly create new pellets
             CreateNewPellets :
             for(int i = 0; i < numPelletsEachDay; i++){
@@ -255,11 +274,47 @@ class driver{
 
 
 
+/*
+        // Create a dataset for the population over time
+        XYSeries populationSeries = new XYSeries("Population");
+        for (log report : logReport) {
+            populationSeries.add(report.day, report.populationAtEndOfDay);
+        }
+
+        XYSeriesCollection dataset = new XYSeriesCollection();
+        dataset.addSeries(populationSeries);
+
+        // Create the chart
+        JFreeChart chart = ChartFactory.createXYLineChart(
+                "Population Over Time",
+                "Day",
+                "Population",
+                dataset,
+                PlotOrientation.VERTICAL,
+                true,
+                true,
+                false
+        );
+
+        // Display the chart in a frame
+        JFrame frame = new JFrame("Population Over Time");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLayout(new BorderLayout());
+
+        ChartPanel chartPanel = new ChartPanel(chart);
+        chartPanel.setPreferredSize(new Dimension(800, 600));
+
+        frame.add(chartPanel, BorderLayout.CENTER);
+        frame.pack();
+        frame.setVisible(true);
+
+        */
 
 
 
         //print logs reports for the user and possibly an option to save the data to a file
         // Write log data to file
+        //TODO better data visualization
         try {
             FileWriter writer = new FileWriter("Report.txt");
             for (log report : logReport) {

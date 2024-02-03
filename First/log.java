@@ -25,6 +25,7 @@ public class log {
         pelletsRemaining = pellets;
     }
 
+
     public log(int day, String sample, int population, int pellets, int oldestRabbit, int oldestGeneration, int newestGeneration){
         this.day = day;
         sampleRabbitString = sample;
@@ -35,7 +36,17 @@ public class log {
         this.newestGeneration = newestGeneration;
     }
 
-    //toString() method, vitally important to output
+    public log(int day, Rabbit sample, int population, int pellets, int oldestRabbit, int oldestGeneration, int newestGeneration){
+        this.day = day;
+        sampleRabbitString = sample.toString();
+        populationAtEndOfDay = population;
+        pelletsRemaining = pellets;
+        this.oldestGeneration = oldestGeneration;
+        this.oldestRabbit = oldestRabbit;
+        this.newestGeneration = newestGeneration;
+    }
+    
+    //toString() method, vital for output
     @Override
     public String toString(){
         return "Day:" + day + 
@@ -43,4 +54,11 @@ public class log {
         " Pellets:" + pelletsRemaining + 
         " Rabbit[" + sampleRabbitString + "]";
     }
+
+    /*
+     * Output the data to a csv file will be easier for data visualization
+     * Possible csv files:
+     * Map vis
+     * Report (Day by Population, oldest, youngest, etc)
+     */
 }
