@@ -1,27 +1,27 @@
 package main.java.model;
 
-import main.java.util.Point;
+import main.java.util.Pos;
 
 public class Food {
     // Attributes
-    private Point position;
+    private Pos position;
     private double value;
     private double size;
-    private Point[] hitbox;
+    private Pos[] hitbox;
 
     // Constructor
-    public Food(Point position, double value, double size) {
+    public Food(Pos position, double value, double size) {
         this.position = position;
         this.value = value;
         this.size = size;
 
         // Initialize hitbox
-        this.hitbox = new Point[4];
+        this.hitbox = new Pos[4];
         updateHitbox();
     }
 
     // Getter methods
-    public Point getPosition() {
+    public Pos getPosition() {
         return position;
     }
 
@@ -30,7 +30,7 @@ public class Food {
     }
 
     // Setter methods
-    public void setPosition(Point position) {
+    public void setPosition(Pos position) {
         this.position = position;
     }
 
@@ -47,7 +47,7 @@ public class Food {
         updateHitbox();
     }
 
-    public Point[] getHitbox() {
+    public Pos[] getHitbox() {
         return hitbox;
     }
 
@@ -55,10 +55,10 @@ public class Food {
     public void updateHitbox() {
         double hitboxSize = size;
 
-        hitbox[0] = new Point(position.xCoord - hitboxSize, position.yCoord - hitboxSize);
-        hitbox[1] = new Point(position.xCoord + hitboxSize, position.yCoord - hitboxSize);
-        hitbox[2] = new Point(position.xCoord - hitboxSize, position.yCoord + hitboxSize);
-        hitbox[3] = new Point(position.xCoord + hitboxSize, position.yCoord + hitboxSize);
+        hitbox[0] = new Pos(position.xCoord - hitboxSize, position.yCoord - hitboxSize);
+        hitbox[1] = new Pos(position.xCoord + hitboxSize, position.yCoord - hitboxSize);
+        hitbox[2] = new Pos(position.xCoord - hitboxSize, position.yCoord + hitboxSize);
+        hitbox[3] = new Pos(position.xCoord + hitboxSize, position.yCoord + hitboxSize);
     }
 
     // Additional methods for the Food class could be added here

@@ -1,12 +1,12 @@
 package main.java.util;
 
-public class Point {
+public class Pos {
     // Public attributes
     public double xCoord;
     public double yCoord;
 
     // Constructor
-    public Point(double xCoord, double yCoord) {
+    public Pos(double xCoord, double yCoord) {
         this.xCoord = xCoord;
         this.yCoord = yCoord;
     }
@@ -21,7 +21,7 @@ public class Point {
         if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-        Point other = (Point) obj;
+        Pos other = (Pos) obj;
         return Double.compare(other.xCoord, xCoord) == 0 &&
                Double.compare(other.yCoord, yCoord) == 0;
     }
