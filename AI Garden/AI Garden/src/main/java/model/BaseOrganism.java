@@ -1,11 +1,12 @@
 package main.java.model;
 
 import main.java.util.Pos;
+import java.awt.Color;
 
 
 public class BaseOrganism {
     // Attributes
-    private Pos position;
+    public Pos position;
     private double weight;
     private double energy;
     private double maxEnergy;
@@ -24,9 +25,12 @@ public class BaseOrganism {
     private double deltaDirection = 0; // the change of direction of the creature. Between -1 and 1. An output from the AI
     private double[] phiVisionDirection; // the offset in degrees from the thetaDirection for each vision line
     private double visionRadius; // the distance the vision lines extend from the organism
-    private double size;
     private Pos[] hitbox;
     private Pos[] visionPoints;
+
+    // Attributes for graphics and data visualization
+    public double size;
+    public Color color = new Color(0, 0, 255);
 
     // Constructor
     public BaseOrganism(Pos position) {

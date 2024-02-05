@@ -11,7 +11,7 @@ public class App {
         System.out.println("Hello, World!");
 
 
-        // Example usage
+        // Example organism usage
         Pos position = new Pos(0, 0);
         double thetaDirection = 90.0;
         double[] phiVisionDirection = new double[]{50.0, 35.0, 20.0, 10.0, 0, -10.0, -20.0, -35.0, -50.0};

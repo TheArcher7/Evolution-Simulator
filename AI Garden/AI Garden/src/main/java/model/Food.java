@@ -1,13 +1,17 @@
 package main.java.model;
 
 import main.java.util.Pos;
+import java.awt.Color;
 
 public class Food {
     // Attributes
-    private Pos position;
-    private double value;
-    private double size;
-    private Pos[] hitbox;
+    public Pos position;
+    double value;
+    Pos[] hitbox;
+    
+    // Attributes for graphics
+    public double size = 3;
+    public Color color = new Color(116, 195, 101);
 
     // Constructor
     public Food(Pos position, double value, double size) {

@@ -31,17 +31,17 @@ public class ExampleOrganismView extends JFrame {
         int organismRadius = (int) Math.round(organism.getSize());
 
 
-        // Draw a circle to represent the organism
+        // Draw the organism
         int X = (int) (organism.getPosition().xCoord * scaleFactor) + offsetX;
         int Y = (int) (organism.getPosition().yCoord * scaleFactor) + offsetY;
         int R = (int) (organismRadius * scaleFactor);
         g.drawOval( X - R, Y - R, 2 * R, 2 * R);
 
-        // Draw lines from the organism position to each point in visionPoints
+        // Draw the organism's vision lines
         Pos[] visionPoints = organism.getVisionPoints();
         drawVisionLines(g, offsetX, offsetY, (int) scaleFactor, X, Y, visionPoints);
 
-        // Draw lines between each point in hitbox
+        // Draw the organism's hitbox
         Pos[] hitbox = organism.getHitbox();
         drawHitbox(g, offsetX, offsetY, (int) scaleFactor, hitbox);
     }
