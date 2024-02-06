@@ -21,7 +21,7 @@ public class BaseOrganism {
     private double weightNeededToReproduce;
 
     // Attributes for vision
-    private double thetaDirection; // direction in degrees the creature is facing
+    private double thetaDirection = 0; // direction in degrees the creature is facing
     private double deltaDirection = 0; // the change of direction of the creature. Between -1 and 1. An output from the AI
     private double[] phiVisionDirection; // the offset in degrees from the thetaDirection for each vision line
     private double visionRadius; // the distance the vision lines extend from the organism
@@ -29,24 +29,24 @@ public class BaseOrganism {
     private Pos[] visionPoints;
 
     // Attributes for graphics and data visualization
-    public double size;
+    public double size = 1;
     public Color color = new Color(0, 0, 255);
 
     // Constructor
     public BaseOrganism(Pos position) {
         this.position = position;
-        weight = 12;
+        weight = 30;
         maxEnergy = 120;
         energy = maxEnergy;// Start with full energy
         age = 0;
         maxAge = 120;
         isAlive = true;
-        energyNeededToReproduce = 50;
+        energyNeededToReproduce = 100;
         weightNeededToReproduce = 20;
 
         size = weight / 3;
         thetaDirection = 90;
-        visionRadius = 3;
+        visionRadius = 60;
         phiVisionDirection = new double[]{50.0, 35.0, 20.0, 10.0, 0, -10.0, -20.0, -35.0, -50.0};
         initVision();
     }

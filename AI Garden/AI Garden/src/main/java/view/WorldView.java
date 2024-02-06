@@ -39,8 +39,8 @@ public class WorldView extends JPanel{
             g.fillOval(
                     (int) (food.position.xCoord / zoomFactor + (double) offsetX / zoomFactor),
                     (int) (food.position.yCoord / zoomFactor + (double) offsetY / zoomFactor),
-                    (int) (food.size / zoomFactor),
-                    (int) (food.size / zoomFactor)
+                    (int) (food.size * 2 / zoomFactor),
+                    (int) (food.size * 2 / zoomFactor)
                     );
             if(DEBUG_MODE){
                 drawHitbox(g, food.getHitbox());
@@ -52,8 +52,8 @@ public class WorldView extends JPanel{
         int organismRadius, X, Y, R;
         for (BaseOrganism organism : world.getOrganisms()) {
             organismRadius = (int) Math.round(organism.getSize());
-            X = (int) (organism.position.xCoord * zoomFactor) + offsetX;
-            Y = (int) (organism.position.yCoord * zoomFactor) + offsetY;
+            X = (int) (organism.position.xCoord * zoomFactor) + offsetX / zoomFactor;
+            Y = (int) (organism.position.yCoord * zoomFactor) + offsetY / zoomFactor;
             R = (int) (organismRadius * zoomFactor);
 
             // Draw the organism's body
@@ -72,8 +72,8 @@ public class WorldView extends JPanel{
         for (Pos point : points) {
             g.drawLine(
                 X, Y, 
-                (int) ((point.xCoord * zoomFactor) + offsetX), 
-                (int) ((point.yCoord * zoomFactor) + offsetY));
+                (int) ((point.xCoord * zoomFactor) + offsetX / zoomFactor), 
+                (int) ((point.yCoord * zoomFactor) + offsetY / zoomFactor));
         }
     }
 
@@ -90,10 +90,10 @@ public class WorldView extends JPanel{
 
     private void drawLine(Graphics g, Pos[] points, int point1, int point2){
         g.drawLine(
-            (int) ((points[point1].xCoord * zoomFactor) + offsetX), 
-            (int) ((points[point1].yCoord * zoomFactor) + offsetY), 
-            (int) ((points[point2].xCoord * zoomFactor) + offsetX), 
-            (int) ((points[point2].yCoord * zoomFactor) + offsetY));
+            (int) ((points[point1].xCoord * zoomFactor) + offsetX / zoomFactor), 
+            (int) ((points[point1].yCoord * zoomFactor) + offsetY / zoomFactor), 
+            (int) ((points[point2].xCoord * zoomFactor) + offsetX / zoomFactor), 
+            (int) ((points[point2].yCoord * zoomFactor) + offsetY / zoomFactor));
     }
 
 

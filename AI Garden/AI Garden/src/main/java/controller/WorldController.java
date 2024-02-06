@@ -23,7 +23,7 @@ public class WorldController {
      * Methods for updating world
      */
 
-    public void updateWorld(double delta) {
+    public void updateWorld(double deltaTime) {
         Iterator<BaseOrganism> organismIterator = worldModel.getOrganisms().iterator();
         while (organismIterator.hasNext()){
             BaseOrganism organism = organismIterator.next();
