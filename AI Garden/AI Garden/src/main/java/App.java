@@ -109,7 +109,6 @@ public class App implements ActionListener{
 
         worldView.repaint();
         controller.updateWorld(delta);
-        
     }
 
 }

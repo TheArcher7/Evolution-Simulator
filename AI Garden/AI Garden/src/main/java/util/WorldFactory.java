@@ -14,44 +14,20 @@ public class WorldFactory {
         WorldModel world = new WorldModel(width, height, 50);
 
         // Example organism usage
-        Pos position = new Pos(0, 0);
-        double thetaDirection = 90.0;
-        double[] phiVisionDirection = new double[]{50.0, 35.0, 20.0, 10.0, 0, -10.0, -20.0, -35.0, -50.0};
-        double visionRadius = 60.0;
-        double size = 10.0;
-
-        BaseOrganism organism = new BaseOrganism(
-            position, 
-            thetaDirection, 
-            phiVisionDirection, 
-            visionRadius, 
-            size);
+        //Pos position = new Pos(0, 0);
+        //BaseOrganism exampleOrganism = new BaseOrganism(position, world);
 
         //Populate with organisms
         BaseOrganism[] organisms = {
-            new BaseOrganism(new Pos(0.0, 0.0), 
-                thetaDirection, 
-                phiVisionDirection, 
-                visionRadius, 
-                size),
-            new BaseOrganism(new Pos(-120, 30), 
-                0, 
-                phiVisionDirection, 
-                visionRadius, 
-                size),
-            new BaseOrganism(
-                new Pos(800,300), 
-                270, 
-                phiVisionDirection, 
-                visionRadius, 
-                size)
+            new BaseOrganism(new Pos(0.0, 0.0), world),
+            new BaseOrganism(new Pos(-120, 30), world),
+            new BaseOrganism(new Pos(800,300), world)
         };
         for (BaseOrganism o : organisms) {
             world.addOrganism(o);
         }
 
-        //TODO set AI
-
+        
         Food[] foods = new Food[organisms.length * 10];
         for (int i = 0; i < organisms.length * 10; i++) {
             double posX = width * Math.random();

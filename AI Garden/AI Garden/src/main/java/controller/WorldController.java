@@ -24,22 +24,50 @@ public class WorldController {
      */
 
     public void updateWorld(double deltaTime) {
-        Iterator<BaseOrganism> organismIterator = worldModel.getOrganisms().iterator();
-        while (organismIterator.hasNext()){
-            BaseOrganism organism = organismIterator.next();
-        //TODO Implement all update world methods
-        // Loop through all organisms
-        // update their positions
-        // calculate their vision
-        // send inputs to AI
-        // handle eating
-        // handle reproduction
-        // handle energy depletion
-        // handle death
+
+        // Update the AI
+        Iterator<BaseOrganism> organismAiIterator = worldModel.getOrganisms().iterator();
+        while (organismAiIterator.hasNext()){
+            BaseOrganism organism = organismAiIterator.next();
+            organism.ai.update();
         }
+
+        Iterator<BaseOrganism> resyncIterator = worldModel.getOrganisms().iterator();
+        while (resyncIterator.hasNext()){
+            BaseOrganism organism = resyncIterator.next();
+            while(organism.aiIsCalculating) {
+                // Do nothing
+                // This stops the main thread and waits for the organism to finish calculating their next move
+                // TODO find a better way to pause for multithreading
+            }
+        }
+        
+        // Update the positions of the organisms in the world based on the output of their AI
+        Iterator<BaseOrganism> organismPositionIterator = worldModel.getOrganisms().iterator();
+        while (organismPositionIterator.hasNext()){
+            BaseOrganism organism = organismPositionIterator.next();
+            organism.ai.handleMoving();
+        }
+
+        // Handle eating, energy depletion,, reproduction, and death
+        Iterator<BaseOrganism> judgementDay = worldModel.getOrganisms().iterator();
+        while (judgementDay.hasNext()){
+            BaseOrganism organism = judgementDay.next();
+            // handle eating
+            // handle energy depletion
+            // handle reproduction
+            // handle death
+        }
+
 
         // create more food
     }
+
+
+    /*
+     * Methods for calculating the organisms and interractions in the world
+     */
+
 
 
 
