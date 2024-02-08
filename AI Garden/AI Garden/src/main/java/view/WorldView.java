@@ -51,7 +51,7 @@ public class WorldView extends JPanel{
     private void drawOrganisms(Graphics g) {
         int organismRadius, X, Y, R;
         for (BaseOrganism organism : world.getOrganisms()) {
-            organismRadius = (int) Math.round(organism.getSize());
+            organismRadius = (int) Math.round(organism.size);
             X = (int) (organism.position.xCoord * zoomFactor) + offsetX / zoomFactor;
             Y = (int) (organism.position.yCoord * zoomFactor) + offsetY / zoomFactor;
             R = (int) (organismRadius * zoomFactor);
@@ -60,8 +60,8 @@ public class WorldView extends JPanel{
             g.drawOval( X - R, Y - R, 2 * R, 2 * R);
 
             if(DEBUG_MODE){
-                drawVisionLines(g, X, Y, organism.getVisionPoints());
-                drawHitbox(g, organism.getHitbox());
+                drawVisionLines(g, X, Y, organism.visionPoints);
+                drawHitbox(g, organism.hitbox);
             }
         }
     }

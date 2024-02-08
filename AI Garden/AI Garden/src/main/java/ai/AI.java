@@ -1,45 +1,33 @@
 package main.java.ai;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import main.java.model.BaseOrganism;
 import main.java.model.WorldModel;
 
 public class AI {
     protected final WorldModel model;
     protected final BaseOrganism organismSelf;
-    protected final ExecutorService executor;
 
     // Constructor
     public AI(WorldModel model, BaseOrganism organism) {
         this.model = model;
         this.organismSelf = organism;
-        this.executor = Executors.newFixedThreadPool(1); // Adjust the pool size as needed
     }
 
     public void update() {
         // Calculate inputs through a neural network using multithreading
-        organismSelf.aiIsCalculating = true;
-        executor.submit(() -> {
-            takeInputs();
-            processNeuralNetwork();
-            organismSelf.aiIsCalculating = false; 
-            //TODO organisms must not move before all AI calculations for all organisms are done
-            //handleMoving();
-        });
+        takeInputs();
+        processNeuralNetwork();
     }
 
     private void takeInputs() {
-        // Calculate what the organism can see
-        // This method can be executed in a separate thread
+        // Calculate what the organism can see, based on its vision and the hitboxes of other entities
+        
     }
 
     private void processNeuralNetwork() {
         // Compute the data in a neural network to determine the organism's behavior
-        // This method can be executed in a separate thread
+        // This should only modify the deltaDirection and the velocity of the organism (both are values between -1 and 1)
 
-        //Should modify the deltaDirection and the velocity of the organism
     }
     
     public void handleMoving() {
@@ -57,9 +45,5 @@ public class AI {
         organismSelf.position.yCoord += deltaY;
         organismSelf.updateHitbox();
         organismSelf.updateVisionPoints();
-    }
-
-    public void shutdown() {
-        executor.shutdown();
     }
 }

@@ -9,6 +9,9 @@ CSC 480 Comupter Science Capstone
 Professor Chintan Thakkar
 Spring 2024
 
+Contact Info:
+micahmock2020@gmail.com
+
 
 ## Folder Structure
 

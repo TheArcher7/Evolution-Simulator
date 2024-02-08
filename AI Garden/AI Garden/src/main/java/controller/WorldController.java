@@ -2,6 +2,9 @@ package main.java.controller;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import main.java.model.BaseOrganism;
 import main.java.model.WorldModel;
@@ -12,11 +15,13 @@ public class WorldController {
     private WorldModel worldModel;
     private WorldView worldView;
     private MainWindow mainWindow;
+    private ExecutorService executor;
 
     // Constructor
     public WorldController(WorldModel worldModel, WorldView worldView) {
         this.worldModel = worldModel;
         this.worldView = worldView;
+        this.executor = Executors.newCachedThreadPool(); // Adjust the thread pool as needed
     }
 
     /*
@@ -24,32 +29,10 @@ public class WorldController {
      */
 
     public void updateWorld(double deltaTime) {
+        updateAI();
+        moveOrganisms();
 
-        // Update the AI
-        Iterator<BaseOrganism> organismAiIterator = worldModel.getOrganisms().iterator();
-        while (organismAiIterator.hasNext()){
-            BaseOrganism organism = organismAiIterator.next();
-            organism.ai.update();
-        }
-
-        Iterator<BaseOrganism> resyncIterator = worldModel.getOrganisms().iterator();
-        while (resyncIterator.hasNext()){
-            BaseOrganism organism = resyncIterator.next();
-            while(organism.aiIsCalculating) {
-                // Do nothing
-                // This stops the main thread and waits for the organism to finish calculating their next move
-                // TODO find a better way to pause for multithreading
-            }
-        }
-        
-        // Update the positions of the organisms in the world based on the output of their AI
-        Iterator<BaseOrganism> organismPositionIterator = worldModel.getOrganisms().iterator();
-        while (organismPositionIterator.hasNext()){
-            BaseOrganism organism = organismPositionIterator.next();
-            organism.ai.handleMoving();
-        }
-
-        // Handle eating, energy depletion,, reproduction, and death
+        // TODO Handle eating, energy depletion,, reproduction, and death
         Iterator<BaseOrganism> judgementDay = worldModel.getOrganisms().iterator();
         while (judgementDay.hasNext()){
             BaseOrganism organism = judgementDay.next();
@@ -59,8 +42,7 @@ public class WorldController {
             // handle death
         }
 
-
-        // create more food
+        // TODO create more food
     }
 
 
@@ -68,7 +50,59 @@ public class WorldController {
      * Methods for calculating the organisms and interractions in the world
      */
 
+     public void updateAI() {
+        // Create a countdown latch to synchronize AI calculations
+        CountDownLatch aiCalculationLatch = new CountDownLatch(worldModel.getOrganisms().size());
 
+        // Update the AI
+        Iterator<BaseOrganism> organismAiIterator = worldModel.getOrganisms().iterator();
+        while (organismAiIterator.hasNext()){
+            BaseOrganism organism = organismAiIterator.next();
+            
+            executor.submit(() -> {
+                organism.ai.update();
+                aiCalculationLatch.countDown(); // Signal completion of AI calculation
+            });
+        }
+
+        // Wait for all AI calculations to complete
+        try {
+            aiCalculationLatch.await();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            e.printStackTrace();
+        }
+     }
+
+     public void moveOrganisms(){
+        // Create a countdown latch to synchronize the movement calculations
+        CountDownLatch movementCalculationLatch = new CountDownLatch(worldModel.getOrganisms().size());
+
+        // Update the positions of the organisms in the world based on the output of their AI
+        Iterator<BaseOrganism> organismPositionIterator = worldModel.getOrganisms().iterator();
+        while (organismPositionIterator.hasNext()){
+            BaseOrganism organism = organismPositionIterator.next();
+
+            executor.submit(() -> {
+                organism.ai.handleMoving();
+                movementCalculationLatch.countDown();
+            });
+        }
+
+        // Wait for all movement calculations to complete
+        try {
+            movementCalculationLatch.await();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            e.printStackTrace();
+        }
+     }
+
+
+     // Shutdown the executor service when it's no longer needed
+    public void shutdown() {
+        executor.shutdown();
+    }
 
 
     /*
