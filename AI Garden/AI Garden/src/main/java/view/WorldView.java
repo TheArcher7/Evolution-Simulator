@@ -36,66 +36,73 @@ public class WorldView extends JPanel{
     private void drawFood(Graphics g) {
         for (Food food : world.getFoods()) {
             g.setColor(food.color);
+            if(DEBUG_MODE){
+                drawHitbox(g, food.hitbox);
+                continue;
+            }
             g.fillOval(
                     (int) (food.position.xCoord / zoomFactor + (double) offsetX / zoomFactor),
                     (int) (food.position.yCoord / zoomFactor + (double) offsetY / zoomFactor),
                     (int) (food.size * 2 / zoomFactor),
                     (int) (food.size * 2 / zoomFactor)
                     );
-            if(DEBUG_MODE){
-                drawHitbox(g, food.getHitbox());
-            }
         }
     }
 
     private void drawOrganisms(Graphics g) {
         int organismRadius, X, Y, R;
         for (BaseOrganism organism : world.getOrganisms()) {
-            organismRadius = (int) Math.round(organism.size);
-            X = (int) (organism.position.xCoord * zoomFactor) + offsetX / zoomFactor;
-            Y = (int) (organism.position.yCoord * zoomFactor) + offsetY / zoomFactor;
-            R = (int) (organismRadius * zoomFactor);
-
-            // Draw the organism's body
-            g.drawOval( X - R, Y - R, 2 * R, 2 * R);
+            g.setColor(organism.color);
+            X = (int) (organism.position.xCoord / zoomFactor) + offsetX / zoomFactor;
+            Y = (int) (organism.position.yCoord / zoomFactor) + offsetY / zoomFactor;
 
             if(DEBUG_MODE){
+                g.setColor(Color.RED);
                 drawVisionLines(g, X, Y, organism.visionPoints);
+                g.setColor(Color.BLUE);
                 drawHitbox(g, organism.hitbox);
+                continue;
             }
+
+            // Draw the organism's body
+            organismRadius = (int) Math.round(organism.size);
+            R = (int) (organismRadius / zoomFactor);
+            g.fillOval( X - R, Y - R, 2 * R, 2 * R);
+
+            // Draw the outtermost and center vision lines
+            drawVisionLines(g, X, Y, 
+                new Pos[]{
+                    organism.visionPoints[0],
+                    organism.visionPoints[(organism.visionPoints.length - 1) / 2],
+                    organism.visionPoints[organism.visionPoints.length - 1]
+                }
+            );
         }
     }
 
     private void drawVisionLines(Graphics g, int X, int Y, Pos[] points) {
-        g.setColor(Color.RED);
-
         for (Pos point : points) {
             g.drawLine(
                 X, Y, 
-                (int) ((point.xCoord * zoomFactor) + offsetX / zoomFactor), 
-                (int) ((point.yCoord * zoomFactor) + offsetY / zoomFactor));
+                (int) ((point.xCoord / zoomFactor) + offsetX / zoomFactor), 
+                (int) ((point.yCoord / zoomFactor) + offsetY / zoomFactor));
         }
     }
 
     private void drawHitbox(Graphics g, Pos[] points){
-        g.setColor(Color.BLUE);
+        int x1 = (int) ((points[0].xCoord / zoomFactor) + offsetX / zoomFactor);
+        int x2 = (int) ((points[1].xCoord / zoomFactor) + offsetX / zoomFactor);
+        int y1 = (int) ((points[0].yCoord / zoomFactor) + offsetY / zoomFactor);
+        int y2 = (int) ((points[1].yCoord / zoomFactor) + offsetY / zoomFactor);
+
         //draws a line between every point in the hitbox. Should look like a square with an x through the center
-        drawLine(g, points, 0, 1);
-        drawLine(g, points, 1, 2);
-        drawLine(g, points, 2, 3);
-        drawLine(g, points, 3, 0);
-        drawLine(g, points, 1, 3);
-        drawLine(g, points, 0, 2);
+        g.drawLine(x1, y1, x2, y2); 
+        g.drawLine(x1, y1, x1, y2);
+        g.drawLine(x1, y1, x2, y1);
+        g.drawLine(x2, y1, x2, y2);
+        g.drawLine(x1, y2, x2, y2);
+        g.drawLine(x1, y2, x2, y1);
     }
-
-    private void drawLine(Graphics g, Pos[] points, int point1, int point2){
-        g.drawLine(
-            (int) ((points[point1].xCoord * zoomFactor) + offsetX / zoomFactor), 
-            (int) ((points[point1].yCoord * zoomFactor) + offsetY / zoomFactor), 
-            (int) ((points[point2].xCoord * zoomFactor) + offsetX / zoomFactor), 
-            (int) ((points[point2].yCoord * zoomFactor) + offsetY / zoomFactor));
-    }
-
 
     // Setters and Getters
     public int getZoomFactor() {

@@ -20,7 +20,7 @@ public class Food {
         this.size = size;
 
         // Initialize hitbox
-        this.hitbox = new Pos[4];
+        this.hitbox = new Pos[2];
         updateHitbox();
     }
 
@@ -62,9 +62,7 @@ public class Food {
         double hitboxSize = size;
 
         hitbox[0] = new Pos(position.xCoord - hitboxSize, position.yCoord - hitboxSize);
-        hitbox[1] = new Pos(position.xCoord + hitboxSize, position.yCoord - hitboxSize);
-        hitbox[2] = new Pos(position.xCoord - hitboxSize, position.yCoord + hitboxSize);
-        hitbox[3] = new Pos(position.xCoord + hitboxSize, position.yCoord + hitboxSize);
+        hitbox[1] = new Pos(position.xCoord + hitboxSize, position.yCoord + hitboxSize);
     }
 
     // Additional methods for the Food class could be added here

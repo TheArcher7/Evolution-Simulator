@@ -15,7 +15,7 @@ public class GeneralAppTest {
     public void testBaseOrganism_UpdateHitbox() {
         // Instantiate BaseOrganism at coordinates (0,0)
         BaseOrganism organism = new BaseOrganism(new Pos(0, 0));
-        organism.setSize(4);
+        organism.size = 4;
 
         organism.updateHitbox();
 
@@ -31,14 +31,14 @@ public class GeneralAppTest {
     public void testBaseOrganism_UpdateVisionPoints() {
         // Instantiate BaseOrganism at coordinates (0,0)
         BaseOrganism organism = new BaseOrganism(new Pos(0, 0));
-        organism.setThetaDirection(90);
-        organism.setPhiVisionDirection(new double[]{50.0, 35.0, 20.0, 10.0, 0, -10.0, -20.0, -35.0, -50.0});
-        organism.setVisionRadius(3);
+        organism.thetaDirection = 90;
+        organism.phiVisionDirection = new double[]{50.0, 35.0, 20.0, 10.0, 0, -10.0, -20.0, -35.0, -50.0};
+        organism.visionRadius = 3;
 
         organism.updateVisionPoints();
 
         // Assert visionPoints with an accuracy of 3 decimals
-        Pos[] visionPoints = organism.getVisionPoints();
+        Pos[] visionPoints = organism.visionPoints;
         assertEquals(roundPoint(new Pos(2.298, 1.928)), roundPoint(visionPoints[0]));
         //TODO add tests
     }
@@ -75,6 +75,18 @@ public class GeneralAppTest {
         System.out.println(b); //should be false
 
         b = AI.outsideOfRange(3, 4, 0, 2);
+        System.out.println(b); //should be true
+    }
+
+    @Test
+    public void isBetweenTest() {
+        boolean b = AI.isBetween(2, 0, 4);
+        System.out.println(b); //should be true
+
+        b = AI.isBetween(1, 1, 5);
+        System.out.println(b); //should be true
+
+        b = AI.isBetween(5.002300230023001, 5.002300230023000, 15.002300230023001);
         System.out.println(b); //should be true
     }
 

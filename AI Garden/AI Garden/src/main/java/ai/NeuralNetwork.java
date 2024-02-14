@@ -8,7 +8,7 @@ public class NeuralNetwork {
     private double[][] activations;
 
     private int generationVersion;
-    private int mutationCount;
+    private int mutationCount = 0;
     private String filename;
 
     // Constructor for deserialization
@@ -72,7 +72,7 @@ public class NeuralNetwork {
             sigmoid(activations[i + 1]);
         }
 
-        return activations[activations.length - 1];
+        return getOutputs();
     }
 
     /*

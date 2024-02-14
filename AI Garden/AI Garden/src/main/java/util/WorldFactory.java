@@ -9,7 +9,7 @@ import main.java.model.WorldModel;
 public class WorldFactory {
     public static WorldModel createTestWorld() {
         //Set up world and size
-        int width = 10000;
+        int width = 1000;
         int height = 800;
         WorldModel world = new WorldModel(width, height, 50);
 

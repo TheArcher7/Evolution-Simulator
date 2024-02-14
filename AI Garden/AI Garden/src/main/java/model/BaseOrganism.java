@@ -1,7 +1,6 @@
 package main.java.model;
 
 import main.java.ai.AI;
-import main.java.util.DeprecatedConstructor;
 import main.java.util.Pos;
 
 import java.awt.Color;
@@ -139,7 +138,7 @@ public class BaseOrganism {
 
     private void initVision() {
         // Initialize hitbox
-        this.hitbox = new Pos[4];
+        this.hitbox = new Pos[2];
         updateHitbox();
 
         // Initialize visionPoints
@@ -149,7 +148,7 @@ public class BaseOrganism {
 
     private void initVision(WorldModel model) {
         // Initialize hitbox
-        this.hitbox = new Pos[4];
+        this.hitbox = new Pos[2];
         updateHitbox();
 
         // Initialize visionPoints
@@ -187,9 +186,7 @@ public class BaseOrganism {
         double hitboxSize = size;
 
         hitbox[0] = new Pos(position.xCoord - hitboxSize, position.yCoord - hitboxSize);
-        hitbox[1] = new Pos(position.xCoord + hitboxSize, position.yCoord - hitboxSize);
-        hitbox[2] = new Pos(position.xCoord - hitboxSize, position.yCoord + hitboxSize);
-        hitbox[3] = new Pos(position.xCoord + hitboxSize, position.yCoord + hitboxSize);
+        hitbox[1] = new Pos(position.xCoord + hitboxSize, position.yCoord + hitboxSize);
     }
 
     // Method to update visionPoints based on position, visionRadius, and phiVisionDirection
