@@ -11,7 +11,17 @@ public class Pos {
         this.yCoord = yCoord;
     }
 
-    // Additional methods for the Point class could be added here
+    /*
+     * Additional methods for the Point class could be added below
+     */
+
+    // Method to calculate the distance between this point and another point
+    public double distanceTo(Pos otherPoint) {
+        double deltaX = otherPoint.xCoord - this.xCoord;
+        double deltaY = otherPoint.yCoord - this.yCoord;
+        return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+    }
+
     // Equals method to compare two Point objects
     @Override
     public boolean equals(Object obj) {

@@ -44,7 +44,6 @@ public class BaseOrganism {
     // Constructor for a simple organism that is useful for testing purposes
     public BaseOrganism(Pos position, WorldModel model) {
         this.position = position;
-        ai = new AI(model, this);
         deltaDirection = generateRandomDoubleInRange(-1, 1);
         velocity = generateRandomDoubleInRange(-1, 1);
 
@@ -65,7 +64,7 @@ public class BaseOrganism {
         thetaDirection = generateRandomDoubleInRange(0, 360);
         visionRadius = 60;
         phiVisionDirection = new double[]{50.0, 35.0, 20.0, 10.0, 0, -10.0, -20.0, -35.0, -50.0};
-        initVision();
+        initVision(model);
     }
 
     
@@ -146,6 +145,19 @@ public class BaseOrganism {
         // Initialize visionPoints
         this.visionPoints = new Pos[phiVisionDirection.length];
         updateVisionPoints();
+    }
+
+    private void initVision(WorldModel model) {
+        // Initialize hitbox
+        this.hitbox = new Pos[4];
+        updateHitbox();
+
+        // Initialize visionPoints
+        this.visionPoints = new Pos[phiVisionDirection.length];
+        updateVisionPoints();
+
+        // Initialize the AI
+        ai = new AI(model, this);
     }
 
     // Example method to simulate the organism consuming energy

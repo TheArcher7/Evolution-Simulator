@@ -6,8 +6,8 @@ import java.awt.Color;
 public class Food {
     // Attributes
     public Pos position;
-    double value;
-    Pos[] hitbox;
+    public double value;
+    public Pos[] hitbox;
     
     // Attributes for graphics
     public double size = 3;
@@ -25,32 +25,34 @@ public class Food {
     }
 
     // Getter methods
+    @Deprecated
     public Pos getPosition() {
         return position;
     }
-
+    @Deprecated
     public double getValue() {
         return value;
     }
 
     // Setter methods
+    @Deprecated
     public void setPosition(Pos position) {
         this.position = position;
     }
-
+    @Deprecated
     public void setValue(double value) {
         this.value = value;
     }
-
+    @Deprecated
     public double getSize() {
         return size;
     }
-
+    @Deprecated
     public void setSize(double size) {
         this.size = size;
         updateHitbox();
     }
-
+    @Deprecated
     public Pos[] getHitbox() {
         return hitbox;
     }

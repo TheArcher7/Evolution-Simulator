@@ -28,21 +28,21 @@ public class ExampleOrganismView extends JFrame {
         int offsetY = frameHeight / 2;
         double scaleFactor = 4; //higher == larger on screen
 
-        int organismRadius = (int) Math.round(organism.getSize());
+        int organismRadius = (int) Math.round(organism.size);
 
 
         // Draw the organism
-        int X = (int) (organism.getPosition().xCoord * scaleFactor) + offsetX;
-        int Y = (int) (organism.getPosition().yCoord * scaleFactor) + offsetY;
+        int X = (int) (organism.position.xCoord * scaleFactor) + offsetX;
+        int Y = (int) (organism.position.yCoord * scaleFactor) + offsetY;
         int R = (int) (organismRadius * scaleFactor);
         g.drawOval( X - R, Y - R, 2 * R, 2 * R);
 
         // Draw the organism's vision lines
-        Pos[] visionPoints = organism.getVisionPoints();
+        Pos[] visionPoints = organism.visionPoints;
         drawVisionLines(g, offsetX, offsetY, (int) scaleFactor, X, Y, visionPoints);
 
         // Draw the organism's hitbox
-        Pos[] hitbox = organism.getHitbox();
+        Pos[] hitbox = organism.hitbox;
         drawHitbox(g, offsetX, offsetY, (int) scaleFactor, hitbox);
     }
 
