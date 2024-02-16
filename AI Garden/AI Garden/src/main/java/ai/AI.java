@@ -6,35 +6,47 @@ import main.java.model.WorldModel;
 import main.java.util.Pos;
 
 public class AI {
-    protected final WorldModel model;
-    protected final BaseOrganism organismSelf;
+    public final WorldModel model;
+    private BaseOrganism organismSelf;
 
-    protected NeuralNetwork neuralNetwork;
+    public NeuralNetwork neuralNetwork;
     protected double[] inputs;
-    protected final int numInputsPerVisionLine; // The number of input nodes that each vision line occupies. Should be 2
-    protected final int numOutputs;           // The number of outputs expected from the neural network. Should be 2
+    public final int numInputsPerVisionLine; // The number of input nodes that each vision line occupies. Should be 2
+    public final int numOutputs;           // The number of outputs expected from the neural network. Should be 2
         // Inputs: each vision line inputs a value for the identity of the item and its distance from the organism, so two input nodes
         // Outputs: the outputs expected from this AI are a deltaDirection (-1 .. 1) and a velocity (-1 .. 1)
+    public final int numExtraInputs; //things like the weight and energy of the organism (basically, self awareness)
 
     // Constructor
     public AI(WorldModel model, BaseOrganism organism) {
         this.model = model;
         this.organismSelf = organism;
         numInputsPerVisionLine = 2;
+        numExtraInputs = 2;
         numOutputs = 2;
         initializeNeuralNetwork();
     }
 
-    protected void initializeNeuralNetwork(){
-        int i = organismSelf.visionPoints.length * numInputsPerVisionLine;
+    //Constructor for building an AI object from another AI
+    public AI(AI ai) {
+        this.model = ai.model;
+        this.organismSelf = ai.organismSelf;
+        numInputsPerVisionLine = ai.numInputsPerVisionLine;
+        numExtraInputs = ai.numExtraInputs;
+        numOutputs = ai.numOutputs;
+        neuralNetwork = new NeuralNetwork(ai.neuralNetwork);
+    }
 
-        if (i < 2) {
+    protected void initializeNeuralNetwork(){
+        int i = organismSelf.visionPoints.length * numInputsPerVisionLine + numExtraInputs;
+
+        if (i < 2 + numExtraInputs) {
             throw new IllegalArgumentException("Organism does not have enough vision points to initialize neural network. ");
         }
 
         if (i > 24)     {neuralNetwork = new NeuralNetwork(i, i-8, i-16, numOutputs);}
-        else if (i > 8) {neuralNetwork = new NeuralNetwork(i, 8, 4, numOutputs);}
-        else if (i > 4) {neuralNetwork = new NeuralNetwork(i, 4, 3, numOutputs);}
+        else if (i > 12) {neuralNetwork = new NeuralNetwork(i, 8, 4, numOutputs);}
+        else if (i > 6) {neuralNetwork = new NeuralNetwork(i, 4, 3, numOutputs);}
         else            {neuralNetwork = new NeuralNetwork(i, i, numOutputs);}
 
         inputs = new double[i];
@@ -47,6 +59,11 @@ public class AI {
     }
 
     private void takeInputs() {
+        // TODO add better way of taking inputs
+        inputs[inputs.length - 1] = organismSelf.energy;
+        inputs[inputs.length - 2] = organismSelf.weight;
+
+
         // Calculates what the organism can see, based on its vision lines and the hitboxes of other entities. These hitboxes must be square.
         double x1, x2, y1, y2, a, b, m, n, x, y, slope, intercept;
         x1 = organismSelf.position.xCoord;
@@ -224,7 +241,7 @@ public class AI {
         // Calculates the new position of the creature in the world based on the velocity and direction it is facing
 
         //update the direction based on the deltaDirection (a value of -1 to 1) which is decided by the AI
-        organismSelf.thetaDirection = organismSelf.thetaDirection + organismSelf.deltaDirection;
+        organismSelf.thetaDirection += organismSelf.deltaDirection * organismSelf.maxDeltaDirection;
         if(organismSelf.thetaDirection > 360 || organismSelf.thetaDirection < -360){organismSelf.thetaDirection /= 360;}
 
         //updates the x y position from the maxVelocity * velocity (a value of -1 to 1) which is decided by the AI
@@ -235,5 +252,46 @@ public class AI {
         organismSelf.position.yCoord += deltaY;
         organismSelf.updateHitbox();
         organismSelf.updateVisionPoints();
+    }
+
+    @Deprecated
+    public void evolve(AI otherAI, BaseOrganism newkid) {
+        AI newbornAI = crossover(otherAI, newkid);
+        newbornAI.mutate();
+        newkid.ai = newbornAI;
+    }
+
+    @Deprecated
+    public AI crossover(AI otherAI, BaseOrganism newkid) {
+        NeuralNetwork n = neuralNetwork.crossover(otherAI.neuralNetwork);
+        AI a = new AI(model, newkid);
+        a.neuralNetwork = n;
+        return a;
+    }
+
+    public AI asexualCrossover(){
+        NeuralNetwork n = new NeuralNetwork(neuralNetwork);
+        AI a = new AI(this);
+        a.setNeuralNetwork(n);
+        return a;
+    }
+
+    public AI crossover(AI otherAI) {
+        NeuralNetwork n = neuralNetwork.crossover(otherAI.neuralNetwork);
+        AI a = new AI(this);
+        a.setNeuralNetwork(n);
+        return a;
+    }
+
+    public void mutate(){
+        neuralNetwork.mutate(model.mutationRate, model.mutationStrength);
+    }
+
+    public void setNeuralNetwork(NeuralNetwork neuralNetwork){
+        this.neuralNetwork = neuralNetwork;
+    }
+
+    public void setOrganismSelf(BaseOrganism organismSelf) {
+        this.organismSelf = organismSelf;
     }
 }

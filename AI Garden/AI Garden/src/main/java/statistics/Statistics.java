@@ -26,4 +26,8 @@ public class Statistics {
         }
     }
 
+    public void print() { //prints certain log data to the consol. Useful for testing
+        
+    }
+
 }

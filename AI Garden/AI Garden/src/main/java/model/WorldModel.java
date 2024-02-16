@@ -6,20 +6,28 @@ import java.util.List;
 
 public class WorldModel {
     //TODO add better access methods for these 
-    public static int maxFoodEnergy = 100;
-    public static int maxFoodAmount = 500;
+    public static int maxFoodEnergy = 1000;
+    public static int maxFoodAmount = 8000;
+    public int ticksPer_OneFoodSpawned = 7;
+
     public static double baseEnergyDepletionRate = 1;
-    public static double speedEnergyDepletionFactor = 0.5;
+    public static double speedEnergyDepletionFactor = 1;
+
+    public static boolean LEARN_ENABLED = true; // the AI will evolve
+    public double mutationRate = 0.1;
+    public double mutationStrength = 0.01;
     public static double worldMutationRate = 0.1;
     public static boolean useLocalMutationRate = false; //if true, then organisms can determin their own mutation rate
     public static double speedFactor = 1;
 
+    public boolean useLifespan = false; //if enabled, will kill organisms older than a certain age
+    public int lifespan = 120;
+
     private final List<BaseOrganism> organisms;
     private final List<Food> foods;
 
-    private double width;
-    private double height;
-    private int foodCreationRate;
+    public double width;
+    public double height;
 
     // Constructor
     public WorldModel(int width, int height, int foodCreationRate) {
@@ -27,7 +35,7 @@ public class WorldModel {
         foods = new ArrayList<>();
         this.width = width;
         this.height = height;
-        this.foodCreationRate = foodCreationRate;
+        ticksPer_OneFoodSpawned = foodCreationRate;
     }
 
 
@@ -77,14 +85,5 @@ public class WorldModel {
     // Method to remove food from the list
     public void removeFood(Food food) {
         foods.remove(food);
-    }
-
-    // Getter and Setter for foodCreationRate
-    public int getFoodCreationRate() {
-        return foodCreationRate;
-    }
-
-    public void setFoodCreationRate(int foodCreationRate) {
-        this.foodCreationRate = foodCreationRate;
     }
 }

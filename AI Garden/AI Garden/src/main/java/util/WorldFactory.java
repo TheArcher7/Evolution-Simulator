@@ -11,7 +11,7 @@ public class WorldFactory {
         //Set up world and size
         int width = 1000;
         int height = 800;
-        WorldModel world = new WorldModel(width, height, 50);
+        WorldModel world = new WorldModel(width, height, 5);
 
         // Example organism usage
         //Pos position = new Pos(0, 0);
@@ -19,20 +19,21 @@ public class WorldFactory {
 
         //Populate with organisms
         BaseOrganism[] organisms = {
-            new BaseOrganism(new Pos(0.0, 0.0), world),
-            new BaseOrganism(new Pos(-120, 30), world),
-            new BaseOrganism(new Pos(800,300), world)
+            new BaseOrganism(new Pos(width / 2, height / 2), world),
+            new BaseOrganism(new Pos(width / 2, height / 2), world),
+            new BaseOrganism(new Pos(width / 2, height / 2), world),
+            new BaseOrganism(new Pos(width / 2, height / 2), world)
         };
         for (BaseOrganism o : organisms) {
             world.addOrganism(o);
         }
 
         
-        Food[] foods = new Food[organisms.length * 10];
+        Food[] foods = new Food[organisms.length * 100];
         for (int i = 0; i < organisms.length * 10; i++) {
             double posX = width * Math.random();
             double posY = height * Math.random();
-            foods[i] = new Food(new Pos(posX, posY), (int) (Math.random() * 100), 3);
+            foods[i] = new Food(new Pos(posX, posY), (int) (Math.random() * WorldModel.maxFoodEnergy), 3);
 
             world.addFood(foods[i]);
         }

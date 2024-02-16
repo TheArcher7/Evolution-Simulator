@@ -6,8 +6,12 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.junit.Ignore;
+
 import main.java.model.BaseOrganism;
+import main.java.model.Food;
 import main.java.model.WorldModel;
+import main.java.util.Pos;
 import main.java.view.MainWindow;
 import main.java.view.WorldView;
 
@@ -16,6 +20,10 @@ public class WorldController {
     private WorldView worldView;
     private MainWindow mainWindow;
     private ExecutorService executor;
+
+    private ArrayList<BaseOrganism> childrenToAddToTheSimulation = new ArrayList<>();
+
+    private int timer = 0;
 
     // Constructor
     public WorldController(WorldModel worldModel, WorldView worldView) {
@@ -29,20 +37,37 @@ public class WorldController {
      */
 
     public void updateWorld(double deltaTime) {
-        updateAI();
+        if (timer % 10 == 0){updateAI();}//triggers 5 times per second
+
+        //moves the organism and calculates their energy depletion
         moveOrganisms();
 
-        // TODO Handle eating, energy depletion,, reproduction, and death
-        Iterator<BaseOrganism> judgementDay = worldModel.getOrganisms().iterator();
-        while (judgementDay.hasNext()){
-            BaseOrganism organism = judgementDay.next();
-            // handle eating
-            // handle energy depletion
-            // handle reproduction
-            // handle death
-        }
+        //eating, reproduction
+        runEnergyCalculations();
+
+        // food and creature removal due to energy depletion
+        removeDeadEntities();
 
         // TODO create more food
+        createMoreFood(timer);
+
+        // TODO create logs every 1 second
+
+        // TODO adjust world values to match, such as 
+        // lower the mutation rate over time
+        // adjust the maximum lifespan to AVERAGE_LIFESPAN * 1.6
+        // TODO implement aging
+
+        
+        timer++;
+        if (timer > 49) {
+            //System.out.println("Timer Test"); //will print every 1 second
+            
+            // Optional expand world over time
+            worldModel.width += 1;
+            worldModel.height += 1;
+            timer = 0;
+        } 
     }
 
 
@@ -50,7 +75,7 @@ public class WorldController {
      * Methods for calculating the organisms and interractions in the world
      */
 
-     public void updateAI() {
+    public void updateAI() {
         // Create a countdown latch to synchronize AI calculations
         CountDownLatch aiCalculationLatch = new CountDownLatch(worldModel.getOrganisms().size());
 
@@ -72,9 +97,9 @@ public class WorldController {
             Thread.currentThread().interrupt();
             e.printStackTrace();
         }
-     }
+    }
 
-     public void moveOrganisms(){
+    public void moveOrganisms(){
         // Create a countdown latch to synchronize the movement calculations
         CountDownLatch movementCalculationLatch = new CountDownLatch(worldModel.getOrganisms().size());
 
@@ -85,6 +110,7 @@ public class WorldController {
 
             executor.submit(() -> {
                 organism.ai.handleMoving();
+                handleEnergyDepletion(organism);
                 movementCalculationLatch.countDown();
             });
         }
@@ -96,14 +122,159 @@ public class WorldController {
             Thread.currentThread().interrupt();
             e.printStackTrace();
         }
-     }
+    }
 
+    public void runEnergyCalculations(){
+        // Create a countdown latch to synchronize the energy expenditure and replenishing calculations
+        CountDownLatch energyCalculationLatch = new CountDownLatch(worldModel.getOrganisms().size());
 
-     // Shutdown the executor service when it's no longer needed
+        // TODO Handle eating, energy depletion,, reproduction, and death
+        Iterator<BaseOrganism> organismIterator = worldModel.getOrganisms().iterator();
+        while (organismIterator.hasNext()){
+            BaseOrganism organism = organismIterator.next();
+
+            executor.submit(() -> {
+                handleFoodIntake(organism);
+                handleReproduction(organism);
+                energyCalculationLatch.countDown();
+            });
+        }
+
+        // Wait for all energy consumption and replenishing calculations to complete
+        try {
+            energyCalculationLatch.await();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            e.printStackTrace();
+        }
+
+        addChildrenToSimulation();
+    }
+
+    public void addChildrenToSimulation(){
+        Iterator<BaseOrganism> childIterator = worldModel.getOrganisms().iterator();
+        while (childIterator.hasNext()){
+            BaseOrganism organism = childIterator.next();
+            if(organism.recentChild != null) {
+                childrenToAddToTheSimulation.add(organism.recentChild);
+                organism.recentChild = null;
+            }
+        }
+        Iterator<BaseOrganism> newbornIterator = childrenToAddToTheSimulation.iterator();
+        while (newbornIterator.hasNext()) {
+            BaseOrganism newBorn = newbornIterator.next();
+            worldModel.addOrganism(newBorn); 
+            newbornIterator.remove();
+        }
+    }
+
+    // Shutdown the executor service when it's no longer needed
     public void shutdown() {
         executor.shutdown();
     }
 
+    public void handleFoodIntake(BaseOrganism organism){
+        //Remove food and add energy to creature if it is close enough
+        Iterator<Food> foodIterator = worldModel.getFoods().iterator();
+        while (foodIterator.hasNext()){
+            Food food = foodIterator.next();
+
+            if(organism.position.distanceTo(food.position) < organism.size * 2){ //food consumption algorithm
+                //alternative consumption method. Fills the organism's energy according to how much it can possibly handle.
+                //double consumed = Math.min(organism.maxEnergy, food.value); 
+                //organism.energy += consumed;
+                //food.value -= consumed;
+                organism.energy += food.value;
+                food.value = 0;
+                if(organism.energy > organism.maxEnergy) {
+                    double gainWeight = (organism.energy - organism.maxEnergy) / 14; //convert excess energy to weight
+                    organism.energy = organism.maxEnergy;
+                    organism.weight += gainWeight;
+                }
+            }
+        }
+    }
+
+    public void handleEnergyDepletion(BaseOrganism organism){ 
+        double energyDepletion = 1 * WorldModel.baseEnergyDepletionRate;
+
+        energyDepletion += Math.pow(organism.velocity * organism.maxVelocity + 1, 2) * WorldModel.speedEnergyDepletionFactor;
+
+        organism.energy -= energyDepletion;
+
+        while(organism.energy < 1) { //convert weight back into energy
+            organism.energy += 9.0;
+            organism.weight -= 1.0;
+        }
+    }
+
+    public void handleReproduction(BaseOrganism organism){
+        //check if organism meets the energy and weight requirements
+        if (organism.energy > organism.energyNeededToReproduce && organism.weight > organism.weightNeededToReproduce) {
+            BaseOrganism closestOrganism = null;
+            double closestDistance = -1;
+            double distance;
+            BaseOrganism organism2;
+            BaseOrganism kid = organism;
+            //select the other parent by selecting the closest organism
+            Iterator<BaseOrganism> organismIterator = worldModel.getOrganisms().iterator();
+            while (organismIterator.hasNext()){
+                organism2 = organismIterator.next();
+                if (closestDistance < 0) {
+                    closestDistance = organism.position.distanceTo(organism2.position);
+                }
+                distance = organism.position.distanceTo(organism2.position);
+                if (distance < closestDistance && !organism.equals(organism2)) { //select closest
+                    closestDistance = distance;
+                    closestOrganism = organism2;
+                }
+            }
+            kid = organism.reproduce(closestOrganism);
+            organism.recentChild = kid;
+            organism.energy -= organism.energyNeededToReproduce;
+            organism.weight -= organism.weightNeededToReproduce;
+        }
+
+        if(organism.energyNeededToReproduce > organism.maxEnergy) {
+            //System.out.println("ERROR  WorldController.handleReproduction()  Organism cannot reproduce because the energy it needs it higher than its maximum");
+        }
+    }
+
+    public void removeDeadEntities(){Iterator<Food> foodIterator = worldModel.getFoods().iterator();
+        while (foodIterator.hasNext()){
+            Food food = foodIterator.next();
+            if (food.value < 1) {
+                foodIterator.remove();
+            }
+        }
+
+        
+        Iterator<BaseOrganism> organismIterator = worldModel.getOrganisms().iterator();
+        while (organismIterator.hasNext()) {
+            BaseOrganism organism = organismIterator.next();
+            if (organism.energy < 1) {
+                organismIterator.remove();
+            }
+            if (organism.weight < 1) {
+                organismIterator.remove();
+            }
+            if (organism.age > organism.maxAge) {
+                organismIterator.remove();
+            }
+        }
+        
+    }
+
+    public void createMoreFood(int timer) {
+        if(timer % worldModel.ticksPer_OneFoodSpawned == 0 
+            && worldModel.getFoods().size() < (WorldModel.maxFoodAmount - worldModel.getOrganisms().size()*5)) {
+            worldModel.addFood(new Food(
+                new Pos(worldModel.getWidth() * Math.random(), worldModel.getHeight() * Math.random()), 
+                WorldModel.maxFoodEnergy, 
+                3));
+        }
+    }
+    
 
     /*
      * Methods for rendering world

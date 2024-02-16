@@ -1,6 +1,7 @@
 package main.java.model;
 
 import main.java.ai.AI;
+import main.java.ai.NeuralNetwork;
 import main.java.util.Pos;
 
 import java.awt.Color;
@@ -17,25 +18,32 @@ public class BaseOrganism {
     public int generation; //0 means original, 1 means the offspring of the original, 2 means the offspring of the offspring, and so on...
     public int maxAge;
     public boolean isAlive;
+
     public double energyNeededToReproduce;
     public double weightNeededToReproduce;
+    public BaseOrganism recentChild;
+    //public double energyGivenToNewborn;
+    //public double weightGivenToNewborn;
 
     // Attributes for AI
     public AI ai;
-    public Boolean aiIsCalculating = false; //boolean used for concurrency
     public double velocity; // a value between -1 and 1. An output from the AI
     public double maxVelocity; //a value determining the creature's maximum velocity
     public double thetaDirection = 0; // direction in degrees the creature is facing
     public double deltaDirection = 0; // the change of direction of the creature. Between -1 and 1. An output from the AI
+    public double maxDeltaDirection = 0;
     public double[] phiVisionDirection; // the offset in degrees from the thetaDirection for each vision line
     public double visionRadius; // the distance the vision lines extend from the organism
     public Pos[] hitbox;
     public Pos[] visionPoints;
 
-    // Attributes for graphics and data visualization
+    // Attributes for graphics and statistics
     public double size = 1;
     public int r = 256, g = 256, b = 256;
     public Color color = new Color(0, 0, 255);
+    public double energySpentSinceLastEating = 0;
+    public double energyEfficiency = 0; // the amount of energy spent to reach food
+    public int numChildren = 0;
 
 
     // Constructors
@@ -43,98 +51,44 @@ public class BaseOrganism {
     // Constructor for a simple organism that is useful for testing purposes
     public BaseOrganism(Pos position, WorldModel model) {
         this.position = position;
+        initializeStandardOrganism();
+        initVision(model);
+    }
+
+    /*
+     * A constructor to be used when creating children. You must manually assign an AI
+     */
+    public BaseOrganism(Pos position) {
+        this.position = position;
+        initializeStandardOrganism();
+        initVision();
+    }
+    
+    // Additional methods for the organism's behavior could be added here
+
+    public void initializeStandardOrganism(){
         deltaDirection = generateRandomDoubleInRange(-1, 1);
         velocity = generateRandomDoubleInRange(-1, 1);
 
         color = generateRandomColor();
         generation = 0;
 
-        maxVelocity = 3;
-        weight = 30;
-        maxEnergy = 120;
-        energy = maxEnergy; // Start with full energy
+        maxVelocity = 2;
+        maxDeltaDirection = 3;
+        weight = 300;
+        maxEnergy = 3200;
+        energy = maxEnergy / 2; // Start with full energy
         age = 0;
         maxAge = 120;
         isAlive = true;
-        energyNeededToReproduce = 100;
-        weightNeededToReproduce = 20;
+        energyNeededToReproduce = 3000;
+        weightNeededToReproduce = 200;
 
         size = 4;
         thetaDirection = generateRandomDoubleInRange(0, 360);
         visionRadius = 60;
-        phiVisionDirection = new double[]{50.0, 35.0, 20.0, 10.0, 0, -10.0, -20.0, -35.0, -50.0};
-        initVision(model);
+        phiVisionDirection = new double[]{160.0, 90.0, 50.0, 20.0, 0, -20.0, -50.0, -90.0, -160.0};
     }
-
-    
-    @Deprecated
-    public BaseOrganism(Pos position) {
-        this.position = position;
-        weight = 30;
-        maxEnergy = 120;
-        energy = maxEnergy;// Start with full energy
-        age = 0;
-        maxAge = 120;
-        isAlive = true;
-        energyNeededToReproduce = 100;
-        weightNeededToReproduce = 20;
-
-        size = weight / 3;
-        thetaDirection = 90;
-        visionRadius = 60;
-        phiVisionDirection = new double[]{50.0, 35.0, 20.0, 10.0, 0, -10.0, -20.0, -35.0, -50.0};
-        initVision();
-    }
-
-    @Deprecated
-    public BaseOrganism(Pos position, double weight, double maxEnergy,
-                        double thetaDirection, double[] phiVisionDirection, double visionRadius) {
-        this.position = position;
-        this.weight = weight;
-        this.maxEnergy = maxEnergy;
-        this.energy = maxEnergy;
-        this.thetaDirection = thetaDirection;
-        this.phiVisionDirection = phiVisionDirection;
-        this.visionRadius = visionRadius;
-
-        initVision();
-    }
-
-    // Constructor 3
-    @Deprecated
-    public BaseOrganism(Pos position, double weight, double maxEnergy,
-                        double thetaDirection, double[] phiVisionDirection, double visionRadius,
-                        int age, int maxAge, boolean isAlive,
-                        double energyNeededToReproduce, double weightNeededToReproduce) {
-        this.position = position;
-        this.weight = weight;
-        this.maxEnergy = maxEnergy;
-        this.energy = maxEnergy;
-        this.thetaDirection = thetaDirection;
-        this.phiVisionDirection = phiVisionDirection;
-        this.visionRadius = visionRadius;
-        this.age = age;
-        this.maxAge = maxAge;
-        this.isAlive = isAlive;
-        this.energyNeededToReproduce = energyNeededToReproduce;
-        this.weightNeededToReproduce = weightNeededToReproduce;
-
-        initVision();
-    }
-
-    // Constructor used for testing vision and rendering
-    @Deprecated
-    public BaseOrganism(Pos position, double thetaDirection, double[] phiVisionDirection, double visionRadius, double size){
-            this.position = position;
-            this.thetaDirection = thetaDirection;
-            this.phiVisionDirection = phiVisionDirection;
-            this.visionRadius = visionRadius;
-            this.size = size;
-
-            initVision();
-        }
-
-    // Additional methods for the organism's behavior could be added here
 
     private void initVision() {
         // Initialize hitbox
@@ -157,22 +111,6 @@ public class BaseOrganism {
 
         // Initialize the AI
         ai = new AI(model, this);
-    }
-
-    // Example method to simulate the organism consuming energy
-    public void consumeEnergy(double amount) {
-        energy += amount;
-        if (energy > maxEnergy) {
-            energy = maxEnergy;
-        }
-    }
-
-    // Example method to simulate the organism losing energy
-    public void loseEnergy(double amount) {
-        energy -= amount;
-        if (energy < 0) {
-            energy = 0;
-        }
     }
 
     public void changeDirection(double speedOfChange){
@@ -214,6 +152,42 @@ public class BaseOrganism {
     private double generateRandomDoubleInRange(double min, double max) {
         Random random = new Random();
         return min + (max - min) * random.nextDouble();
+    }
+
+    public BaseOrganism reproduce(BaseOrganism otherParent) {
+        // set the attributes of the new child organism
+        Pos p = new Pos(position.xCoord, position.yCoord);
+        BaseOrganism newborn = new BaseOrganism(p, ai.model);
+        newborn.generation = generation + 1;
+        numChildren++;
+
+        // mutate all inherent attributes not associated with the AI
+        Random random = new Random();
+        newborn.energy = energyNeededToReproduce;
+        newborn.weight = weightNeededToReproduce / 2;
+        //TODO mutate
+
+        //FIXME for some reason, doesn't work
+        if (WorldModel.LEARN_ENABLED) {
+            // combine the AI of both parents to create new AI for child, mutates the new AI, and sets it for the child
+            //AI newbornAI = ai.asexualCrossover(); //ai.crossover(otherParent.ai);
+            //newbornAI.mutate();
+            //newbornAI.setOrganismSelf(newborn);
+            //newborn.ai = newbornAI;
+
+            //NeuralNetwork nn = ai.neuralNetwork.crossover(otherParent.ai.neuralNetwork);
+            NeuralNetwork nn = new NeuralNetwork(ai.neuralNetwork);
+            nn.mutate(ai.model.mutationRate, ai.model.mutationStrength);
+            newborn.ai.setNeuralNetwork(nn);
+        }
+        else {
+            newborn.ai = ai.asexualCrossover();
+            newborn.ai.setOrganismSelf(newborn);
+        }
+        
+        
+        recentChild = newborn;
+        return newborn;
     }
 
 

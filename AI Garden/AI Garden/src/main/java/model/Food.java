@@ -6,7 +6,7 @@ import java.awt.Color;
 public class Food {
     // Attributes
     public Pos position;
-    public double value;
+    public double value = 1000;
     public Pos[] hitbox;
     
     // Attributes for graphics
