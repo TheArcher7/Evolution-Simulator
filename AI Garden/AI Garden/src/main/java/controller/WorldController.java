@@ -21,7 +21,7 @@ public class WorldController {
 
     private ArrayList<BaseOrganism> childrenToAddToTheSimulation = new ArrayList<>();
 
-    private int timer = 0;
+    private int ticks = 0;
     private int seconds = 0;
     private int minutes = 0;
     private int hours = 0;
@@ -38,7 +38,8 @@ public class WorldController {
      */
 
     public void updateWorld(double deltaTime) {
-        if (timer % 10 == 0){updateAI();}//triggers 5 times per second
+        if (ticks % 10 == 0){updateAI();}//triggers 5 times per second
+        //TODO process AI on a rotation
 
         //moves the organism and calculates their energy depletion
         moveOrganisms();
@@ -50,20 +51,19 @@ public class WorldController {
         removeDeadEntities();
 
         // TODO create more food
-        createMoreFood(timer);
+        createMoreFood(ticks);
 
         // TODO create logs every 1 second
 
         // TODO adjust world values to match, such as 
         // lower the mutation rate over time
         // adjust the maximum lifespan to AVERAGE_LIFESPAN * 1.6
-        // TODO implement aging
 
         
-        timer++;
-        if (timer > 49) { //triggers every 1 second
+        ticks++;
+        if (ticks > 49) { //triggers every 1 second
             seconds++;
-            timer = 0;
+            ticks = 0;
 
             // Optional expand world over time
             if (worldModel.width < 10500){
@@ -101,7 +101,7 @@ public class WorldController {
      * Methods for calculating the organisms and interractions in the world
      */
 
-    public void updateAI() {
+    private void updateAI() {
         // Create a countdown latch to synchronize AI calculations
         CountDownLatch aiCalculationLatch = new CountDownLatch(worldModel.getOrganisms().size());
 
@@ -125,7 +125,7 @@ public class WorldController {
         }
     }
 
-    public void moveOrganisms(){
+    private void moveOrganisms(){
         // Create a countdown latch to synchronize the movement calculations
         CountDownLatch movementCalculationLatch = new CountDownLatch(worldModel.getOrganisms().size());
 
@@ -150,7 +150,7 @@ public class WorldController {
         }
     }
 
-    public void runEnergyCalculations(){
+    private void runEnergyCalculations(){
         // Create a countdown latch to synchronize the energy expenditure and replenishing calculations
         CountDownLatch energyCalculationLatch = new CountDownLatch(worldModel.getOrganisms().size());
 
@@ -177,7 +177,7 @@ public class WorldController {
         addChildrenToSimulation();
     }
 
-    public void addChildrenToSimulation(){
+    private void addChildrenToSimulation(){
         Iterator<BaseOrganism> childIterator = worldModel.getOrganisms().iterator();
         while (childIterator.hasNext()){
             BaseOrganism organism = childIterator.next();
@@ -199,7 +199,7 @@ public class WorldController {
         executor.shutdown();
     }
 
-    public void handleFoodIntake(BaseOrganism organism){
+    private void handleFoodIntake(BaseOrganism organism){
         //Remove food and add energy to creature if it is close enough
         Iterator<Food> foodIterator = worldModel.getFoods().iterator();
         while (foodIterator.hasNext()){
@@ -221,7 +221,7 @@ public class WorldController {
         }
     }
 
-    public void handleEnergyDepletion(BaseOrganism organism){ 
+    private void handleEnergyDepletion(BaseOrganism organism){ 
         double energyDepletion = 1 * WorldModel.baseEnergyDepletionRate;
 
         energyDepletion += Math.pow(organism.velocity * organism.maxVelocity + 1, 2) * WorldModel.speedEnergyDepletionFactor;
@@ -234,7 +234,7 @@ public class WorldController {
         }
     }
 
-    public void handleReproduction(BaseOrganism organism){
+    private void handleReproduction(BaseOrganism organism){
         //check if organism meets the energy and weight requirements
         if (organism.energy > organism.energyNeededToReproduce && organism.weight > organism.weightNeededToReproduce) {
             BaseOrganism closestOrganism = null;
@@ -266,7 +266,8 @@ public class WorldController {
         }
     }
 
-    public void removeDeadEntities(){Iterator<Food> foodIterator = worldModel.getFoods().iterator();
+    private void removeDeadEntities(){
+        Iterator<Food> foodIterator = worldModel.getFoods().iterator();
         while (foodIterator.hasNext()){
             Food food = foodIterator.next();
             if (food.value < 1) {
@@ -291,7 +292,7 @@ public class WorldController {
         
     }
 
-    public void createMoreFood(int timer) {
+    private void createMoreFood(int timer) {
         if(timer % worldModel.ticksPer_OneFoodSpawned == 0 
             && worldModel.getFoods().size() < (worldModel.maxFoodAmount - worldModel.getOrganisms().size()*5)) {
             worldModel.addFood(new Food(

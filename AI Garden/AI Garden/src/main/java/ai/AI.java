@@ -209,7 +209,7 @@ public class AI {
         double distance = organismSelf.position.distanceTo(f.position);
         if (inputs[index] == 0 || inputs[index] > distance) {
             inputs[index] = distance;
-            inputs[index + 1] = f.value; //TODO test if f.value or 1.0 works better as inputs
+            inputs[index + 1] = 1.0; //f.value; //TODO test if f.value or 1.0 works better as inputs
             return;
         }
     }

@@ -96,8 +96,9 @@ public class NeuralNetwork {
         return activations[activations.length - 1];
     }
 
+    //There is something wrong with this method, but I can't figure out what or why
     @Deprecated
-    public NeuralNetwork crossover(NeuralNetwork other) { //There is something wrong with this method, but I can't figure out what or why
+    public NeuralNetwork crossover(NeuralNetwork other) { 
         NeuralNetwork clone = new NeuralNetwork(this);
 
         HiddenLayer[] hiddenLayers = clone.hiddenLayers;
