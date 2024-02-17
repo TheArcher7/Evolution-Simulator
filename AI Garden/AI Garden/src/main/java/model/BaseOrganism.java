@@ -61,7 +61,7 @@ public class BaseOrganism {
     public BaseOrganism(Pos position) {
         this.position = position;
         initializeStandardOrganism();
-        initVision();
+        initVision(); //Initialize without an AI
     }
     
     // Additional methods for the organism's behavior could be added here
@@ -73,21 +73,21 @@ public class BaseOrganism {
         color = generateRandomColor();
         generation = 0;
 
-        maxVelocity = 2;
-        maxDeltaDirection = 3;
-        weight = 300;
-        maxEnergy = 3200;
-        energy = maxEnergy / 2; // Start with full energy
+        maxVelocity = 2.0;
+        maxDeltaDirection = 3.0;
+        weight = 300.0;
+        maxEnergy = 3200.0;
+        energy = maxEnergy / 2; // Start with half full energy
         age = 0;
         maxAge = 120;
         isAlive = true;
-        energyNeededToReproduce = 3000;
-        weightNeededToReproduce = 200;
+        energyNeededToReproduce = 3000.0;
+        weightNeededToReproduce = 200.0;
 
-        size = 4;
+        size = 4; // initializes a hitbox with a width and height of size*2 ('size' units away in each cardinal direction)
         thetaDirection = generateRandomDoubleInRange(0, 360);
-        visionRadius = 60;
-        phiVisionDirection = new double[]{160.0, 90.0, 50.0, 20.0, 0, -20.0, -50.0, -90.0, -160.0};
+        visionRadius = 40;
+        phiVisionDirection = new double[]{50.0, 20.0, 0, -20.0, -50.0,};
     }
 
     private void initVision() {
@@ -122,7 +122,6 @@ public class BaseOrganism {
     // Method to update hitbox based on position and size
     public void updateHitbox() {
         double hitboxSize = size;
-
         hitbox[0] = new Pos(position.xCoord - hitboxSize, position.yCoord - hitboxSize);
         hitbox[1] = new Pos(position.xCoord + hitboxSize, position.yCoord + hitboxSize);
     }
@@ -142,10 +141,10 @@ public class BaseOrganism {
     // Method to generate a random color
     private Color generateRandomColor() {
         Random random = new Random();
-        r = random.nextInt(256);
-        g = random.nextInt(256);
+        r = random.nextInt(256); //uses 230 rather than 256 to improve visibility
+        g = random.nextInt(230);
         b = random.nextInt(256);
-        return new Color(r, b, b);
+        return new Color(r, g, b);
     }
 
     // Method to generate a random double within a specified range
@@ -165,9 +164,16 @@ public class BaseOrganism {
         Random random = new Random();
         newborn.energy = energyNeededToReproduce;
         newborn.weight = weightNeededToReproduce / 2;
+
         //TODO mutate
 
-        //FIXME for some reason, doesn't work
+        // Add a random value between -1 and 1 to each color component
+        newborn.r = Math.max(0, Math.min(256, r + random.nextInt(3) - 1)); // Ensure the value stays within [0, 255]
+        newborn.g = Math.max(0, Math.min(230, g + random.nextInt(3) - 1)); // Ensure the value stays within [0, 255]
+        newborn.b = Math.max(0, Math.min(256, b + random.nextInt(3) - 1)); // Ensure the value stays within [0, 255]
+        newborn.color = new Color(newborn.r, newborn.g, newborn.b);
+
+        
         if (WorldModel.LEARN_ENABLED) {
             // combine the AI of both parents to create new AI for child, mutates the new AI, and sets it for the child
             //AI newbornAI = ai.asexualCrossover(); //ai.crossover(otherParent.ai);
@@ -175,7 +181,7 @@ public class BaseOrganism {
             //newbornAI.setOrganismSelf(newborn);
             //newborn.ai = newbornAI;
 
-            //NeuralNetwork nn = ai.neuralNetwork.crossover(otherParent.ai.neuralNetwork);
+            //NeuralNetwork nn = ai.neuralNetwork.crossover(otherParent.ai.neuralNetwork); //FIXME for some reason, doesn't work
             NeuralNetwork nn = new NeuralNetwork(ai.neuralNetwork);
             nn.mutate(ai.model.mutationRate, ai.model.mutationStrength);
             newborn.ai.setNeuralNetwork(nn);

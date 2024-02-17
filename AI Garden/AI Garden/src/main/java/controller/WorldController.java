@@ -6,8 +6,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.junit.Ignore;
-
 import main.java.model.BaseOrganism;
 import main.java.model.Food;
 import main.java.model.WorldModel;
@@ -24,6 +22,9 @@ public class WorldController {
     private ArrayList<BaseOrganism> childrenToAddToTheSimulation = new ArrayList<>();
 
     private int timer = 0;
+    private int seconds = 0;
+    private int minutes = 0;
+    private int hours = 0;
 
     // Constructor
     public WorldController(WorldModel worldModel, WorldView worldView) {
@@ -60,14 +61,39 @@ public class WorldController {
 
         
         timer++;
-        if (timer > 49) {
-            //System.out.println("Timer Test"); //will print every 1 second
-            
-            // Optional expand world over time
-            worldModel.width += 1;
-            worldModel.height += 1;
+        if (timer > 49) { //triggers every 1 second
+            seconds++;
             timer = 0;
-        } 
+
+            // Optional expand world over time
+            if (worldModel.width < 10500){
+                worldModel.width += 1.75;
+                worldModel.height += 1;
+            }
+            worldModel.maxFoodAmount = (int) (worldModel.width * worldModel.height / worldModel.foodDensity);
+        }
+        if (seconds > 58) { //Triggers every 1 minute
+            minutes++;
+            seconds = 0;
+            System.out.println(worldModel.width + " " + worldModel.height);
+
+            //optional decrease food energy over time
+            if (worldModel.maxFoodEnergy > 500) {
+                worldModel.maxFoodEnergy--;
+            }
+
+            //TODO increase the age of entities
+            
+        }
+        if (minutes > 58) { //triggers every 1 hour
+            hours++;
+            minutes = 0;
+
+            // Optional, decrease food density over time
+            if (worldModel.foodDensity > 50) {
+                worldModel.foodDensity--;
+            }
+        }
     }
 
 
@@ -267,10 +293,10 @@ public class WorldController {
 
     public void createMoreFood(int timer) {
         if(timer % worldModel.ticksPer_OneFoodSpawned == 0 
-            && worldModel.getFoods().size() < (WorldModel.maxFoodAmount - worldModel.getOrganisms().size()*5)) {
+            && worldModel.getFoods().size() < (worldModel.maxFoodAmount - worldModel.getOrganisms().size()*5)) {
             worldModel.addFood(new Food(
                 new Pos(worldModel.getWidth() * Math.random(), worldModel.getHeight() * Math.random()), 
-                WorldModel.maxFoodEnergy, 
+                worldModel.maxFoodEnergy, 
                 3));
         }
     }

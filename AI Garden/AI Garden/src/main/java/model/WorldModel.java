@@ -6,16 +6,17 @@ import java.util.List;
 
 public class WorldModel {
     //TODO add better access methods for these 
-    public static int maxFoodEnergy = 1000;
-    public static int maxFoodAmount = 8000;
+    public int maxFoodEnergy = 1200;
+    public int maxFoodAmount = 8000;
     public int ticksPer_OneFoodSpawned = 7;
+    public int foodDensity = 160;
 
-    public static double baseEnergyDepletionRate = 1;
+    public static double baseEnergyDepletionRate = 0.4;
     public static double speedEnergyDepletionFactor = 1;
 
     public static boolean LEARN_ENABLED = true; // the AI will evolve
-    public double mutationRate = 0.1;
-    public double mutationStrength = 0.01;
+    public double mutationRate = 0.15;
+    public double mutationStrength = 0.1;
     public static double worldMutationRate = 0.1;
     public static boolean useLocalMutationRate = false; //if true, then organisms can determin their own mutation rate
     public static double speedFactor = 1;

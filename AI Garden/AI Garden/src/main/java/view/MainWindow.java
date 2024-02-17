@@ -91,7 +91,7 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
         maxFoodContainer.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         maxFoodLabel = new JLabel("Max Food (Max 100,000)");
-        SpinnerModel maxFoodSpinnerModel = new SpinnerNumberModel(WorldModel.maxFoodAmount, 0, 100000, 1);
+        SpinnerModel maxFoodSpinnerModel = new SpinnerNumberModel(model.maxFoodAmount, 0, 100000, 1);
         maxFoodSpinner = new JSpinner(maxFoodSpinnerModel);
         maxFoodSpinner.setEditor(new JSpinner.NumberEditor(maxFoodSpinner, "#"));
         maxFoodSpinner.addChangeListener(this);
@@ -158,7 +158,7 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
             controller.setSpeed(value);
         } else if (e.getSource() == maxFoodSpinner) {
             JSpinner source = (JSpinner) e.getSource();
-            WorldModel.maxFoodAmount = (int) source.getValue();
+            model.maxFoodAmount = (int) source.getValue();
         }
     }
 

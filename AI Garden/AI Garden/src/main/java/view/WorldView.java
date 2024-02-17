@@ -9,7 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class WorldView extends JPanel{
-    public static boolean DEBUG_MODE = true;
+    public static boolean DEBUG_MODE = false;
 
     private WorldModel world;
 
