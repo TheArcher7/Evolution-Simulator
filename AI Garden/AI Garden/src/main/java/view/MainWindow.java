@@ -99,6 +99,7 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
         maxFoodContainer.add(maxFoodLabel);
         maxFoodContainer.add(maxFoodSpinner);
 
+        // Add components and labels to the right container
         rightContainer.add(textLabel);
         rightContainer.add(Box.createVerticalStrut(10));
         rightContainer.add(speedLabel);
@@ -147,6 +148,11 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
 
     public void update(double delta) {
         // TODO get statistics and update the text labels for various attributes such as population
+        String displayString = "";
+        displayString += "Organisms: " + model.getOrganisms().size() + "       " + 
+                        "Food: "  + model.getFoods().size() + "       " +
+                        "Food Spawning: " + model.ticksPer_FoodSpawn + "*" + model.foodSpawnedPerEvent;
+        textLabel.setText(displayString);
     }
 
     @Override

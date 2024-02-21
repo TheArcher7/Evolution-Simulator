@@ -55,9 +55,9 @@ public class WorldController {
 
         // TODO create logs every 1 second
 
-        // TODO adjust world values to match, such as 
+        // TODO adjust world values to match  desired values, such as 
         // lower the mutation rate over time
-        // adjust the maximum lifespan to AVERAGE_LIFESPAN * 1.6
+        // set maximum_lifespan = AVERAGE_LIFESPAN * 1.6 every hour
 
         
         ticks++;
@@ -65,34 +65,31 @@ public class WorldController {
             seconds++;
             ticks = 0;
 
-            // Optional expand world over time
-            if (worldModel.width < 10500){
-                worldModel.width += 1.75;
-                worldModel.height += 1;
-            }
-            worldModel.maxFoodAmount = (int) (worldModel.width * worldModel.height / worldModel.foodDensity);
+            // Optional expand / shrink world over time
+            changeWorldArea();
+
+            // Optional increase / descrease max food amount over time
+            changeWorldFoodAmount();
+
+            //TODO increase the age of entities
+
+            // Optional 
+
         }
         if (seconds > 58) { //Triggers every 1 minute
             minutes++;
             seconds = 0;
             System.out.println(worldModel.width + " " + worldModel.height);
 
-            //optional decrease food energy over time
-            if (worldModel.maxFoodEnergy > 500) {
-                worldModel.maxFoodEnergy--;
-            }
+            //optional increase / decrease food energy over time
+            changeWorldFoodEnergy();
 
-            //TODO increase the age of entities
             
         }
         if (minutes > 58) { //triggers every 1 hour
             hours++;
             minutes = 0;
 
-            // Optional, decrease food density over time
-            if (worldModel.foodDensity > 50) {
-                worldModel.foodDensity--;
-            }
         }
     }
 
@@ -210,6 +207,13 @@ public class WorldController {
                 //double consumed = Math.min(organism.maxEnergy, food.value); 
                 //organism.energy += consumed;
                 //food.value -= consumed;
+
+                // recording for energy efficiency calculations
+                organism.numFoodEaten++;
+                organism.energySpendingLog.add(organism.energySpentSinceLastEating);
+                organism.energySpentSinceLastEating = 0;
+
+                // eat food and restore energy
                 organism.energy += food.value;
                 food.value = 0;
                 if(organism.energy > organism.maxEnergy) {
@@ -227,6 +231,7 @@ public class WorldController {
         energyDepletion += Math.pow(organism.velocity * organism.maxVelocity + 1, 2) * WorldModel.speedEnergyDepletionFactor;
 
         organism.energy -= energyDepletion;
+        organism.energySpentSinceLastEating += energyDepletion;
 
         while(organism.energy < 1) { //convert weight back into energy
             organism.energy += 9.0;
@@ -273,6 +278,10 @@ public class WorldController {
             if (food.value < 1) {
                 foodIterator.remove();
             }
+
+            if (worldModel.useLifespan && food.age > worldModel.food_lifespan) {
+                foodIterator.remove();
+            }
         }
 
         
@@ -285,20 +294,60 @@ public class WorldController {
             if (organism.weight < 1) {
                 organismIterator.remove();
             }
-            if (organism.age > organism.maxAge) {
+            if (worldModel.useLifespan && organism.age > organism.maxAge) {
                 organismIterator.remove();
             }
         }
         
     }
 
-    private void createMoreFood(int timer) {
-        if(timer % worldModel.ticksPer_OneFoodSpawned == 0 
-            && worldModel.getFoods().size() < (worldModel.maxFoodAmount - worldModel.getOrganisms().size()*5)) {
-            worldModel.addFood(new Food(
-                new Pos(worldModel.getWidth() * Math.random(), worldModel.getHeight() * Math.random()), 
-                worldModel.maxFoodEnergy, 
-                3));
+    private void createMoreFood(int tickCount) {
+        if(tickCount % worldModel.ticksPer_FoodSpawn == 0 
+            && worldModel.getFoods().size() < worldModel.maxFoodAmount) {
+                for(int i = 0; i < worldModel.foodSpawnedPerEvent; i++){   
+                    worldModel.addFood(new Food(
+                        new Pos(worldModel.getWidth() * Math.random(), worldModel.getHeight() * Math.random()), 
+                        worldModel.maxFoodEnergy, 
+                        3));
+                }
+        }
+    }
+
+    // Expand / shrink world over time
+    public void changeWorldArea(){
+        if (worldModel.width < worldModel.desiredWidth){
+            worldModel.width += 1.75;
+            worldModel.height += 1;
+
+            worldModel.maxFoodAmount = (int) ((worldModel.width * worldModel.height) * worldModel.foodDensity);
+        }
+        else if (worldModel.width > worldModel.desiredWidth){
+            worldModel.width -= 1.75;
+            worldModel.height -= 1;
+
+            worldModel.maxFoodAmount = (int) ((worldModel.width * worldModel.height) * worldModel.foodDensity);
+        }
+    }
+
+    // Increase / descrease max food amount over time
+    public void changeWorldFoodAmount(){
+        if (worldModel.maxFoodAmount < worldModel.desiredMaxFoodAmount) {
+            worldModel.maxFoodAmount++;
+            worldModel.foodDensity = worldModel.maxFoodAmount / (worldModel.width * worldModel.height);
+        }
+        else if (worldModel.maxFoodAmount > worldModel.desiredMaxFoodAmount) {
+            worldModel.maxFoodAmount--;
+            worldModel.foodDensity = worldModel.maxFoodAmount / (worldModel.width * worldModel.height);
+        }
+    }
+
+    // Increase / decrease food energy over time
+    public void changeWorldFoodEnergy(){
+        if (worldModel.maxFoodEnergy < worldModel.desiredMaxFoodEnergy) {
+            worldModel.maxFoodEnergy++;
+        }
+        else if (worldModel.maxFoodEnergy > worldModel.desiredMaxFoodEnergy) {
+            worldModel.maxFoodEnergy--;
         }
     }
     

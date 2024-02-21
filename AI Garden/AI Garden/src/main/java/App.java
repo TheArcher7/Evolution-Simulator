@@ -108,6 +108,7 @@ public class App implements ActionListener{
         listener.handlePressedMouseButtons(worldView.getZoomFactor());
 
         worldView.repaint();
+        mainWindow.update(delta);
         controller.updateWorld(delta);
     }
 

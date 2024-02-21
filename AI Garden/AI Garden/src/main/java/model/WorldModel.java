@@ -7,9 +7,15 @@ import java.util.List;
 public class WorldModel {
     //TODO add better access methods for these 
     public int maxFoodEnergy = 1200;
+    public int desiredMaxFoodEnergy = 500;
+
     public int maxFoodAmount = 8000;
-    public int ticksPer_OneFoodSpawned = 7;
-    public int foodDensity = 160;
+    public int desiredMaxFoodAmount = 2000;
+
+    public int ticksPer_FoodSpawn = 1;
+    public int foodSpawnedPerEvent = 3;
+
+    public double foodDensity = 0.0009201325; // Needed for calculating expanding / shrinking worlds
 
     public static double baseEnergyDepletionRate = 0.4;
     public static double speedEnergyDepletionFactor = 1;
@@ -21,12 +27,14 @@ public class WorldModel {
     public static boolean useLocalMutationRate = false; //if true, then organisms can determin their own mutation rate
     public static double speedFactor = 1;
 
-    public boolean useLifespan = false; //if enabled, will kill organisms older than a certain age
+    public boolean useLifespan = false; //if enabled, will kill organisms and food older than a certain age
     public int lifespan = 120;
+    public int food_lifespan = 60;
 
     private final List<BaseOrganism> organisms;
     private final List<Food> foods;
 
+    public double desiredWidth = 10500;
     public double width;
     public double height;
 
@@ -36,7 +44,7 @@ public class WorldModel {
         foods = new ArrayList<>();
         this.width = width;
         this.height = height;
-        ticksPer_OneFoodSpawned = foodCreationRate;
+        foodSpawnedPerEvent = foodCreationRate;
     }
 
 

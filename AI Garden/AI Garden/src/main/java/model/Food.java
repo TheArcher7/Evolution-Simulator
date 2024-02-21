@@ -2,11 +2,13 @@ package main.java.model;
 
 import main.java.util.Pos;
 import java.awt.Color;
+import java.util.Random;
 
 public class Food {
     // Attributes
     public Pos position;
     public double value = 1000;
+    public int age = 0;
     public Pos[] hitbox;
     
     // Attributes for graphics
@@ -66,5 +68,11 @@ public class Food {
     }
 
     // Additional methods for the Food class could be added here
+
+    // returns number between [min .. max)
+    public static int generateRandomNumber(int min, int max) {
+        Random random = new Random();
+        return random.nextInt(max - min + 1) + min;
+    }
 }
 

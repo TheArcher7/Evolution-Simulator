@@ -5,6 +5,8 @@ import main.java.ai.NeuralNetwork;
 import main.java.util.Pos;
 
 import java.awt.Color;
+import java.awt.List;
+import java.util.ArrayList;
 import java.util.Random;
 
 
@@ -41,8 +43,9 @@ public class BaseOrganism {
     public double size = 1;
     public int r = 256, g = 256, b = 256;
     public Color color = new Color(0, 0, 255);
+    public int numFoodEaten = 0;
     public double energySpentSinceLastEating = 0;
-    public double energyEfficiency = 0; // the amount of energy spent to reach food
+    public ArrayList<Double> energySpendingLog = new ArrayList<>(); //TODO, record energy efficiencies so that an average efficiency can be found
     public int numChildren = 0;
 
 
@@ -167,10 +170,10 @@ public class BaseOrganism {
 
         //TODO mutate
 
-        // Add a random value between -1 and 1 to each color component
-        newborn.r = Math.max(0, Math.min(256, r + random.nextInt(3) - 1)); // Ensure the value stays within [0, 255]
-        newborn.g = Math.max(0, Math.min(230, g + random.nextInt(3) - 1)); // Ensure the value stays within [0, 255]
-        newborn.b = Math.max(0, Math.min(256, b + random.nextInt(3) - 1)); // Ensure the value stays within [0, 255]
+        // Add a random value between -3 and 3 to each color component
+        newborn.r = Math.max(0, Math.min(256, r + random.nextInt(9) - 3)); // Ensure the value stays within [0, 255]
+        newborn.g = Math.max(0, Math.min(230, g + random.nextInt(9) - 3)); // Ensure the value stays within [0, 230]
+        newborn.b = Math.max(0, Math.min(256, b + random.nextInt(9) - 3)); // Ensure the value stays within [0, 255]
         newborn.color = new Color(newborn.r, newborn.g, newborn.b);
 
         
@@ -203,164 +206,14 @@ public class BaseOrganism {
 
 
     //Getter and Setter methods
-    @Deprecated
-    public void setAI(AI ai) {
-        this.ai = ai;
-    }
-
-    // Getter methods
-    @Deprecated
-    public Pos getPosition() {
-        return position;
-    }
-
-    @Deprecated
-    public double getWeight() {
-        return weight;
-    }
-
-    @Deprecated
-    public double getEnergy() {
-        return energy;
-    }
-
-    @Deprecated
-    public double getMaxEnergy() {
-        return maxEnergy;
-    }
-
-    // Setter methods
-    @Deprecated
-    public void setPosition(Pos position) {
-        this.position = position;
-    }
-
-    @Deprecated
-    public void setWeight(double weight) {
-        this.weight = weight;
-    }
-
-    @Deprecated
-    public void setEnergy(double energy) {
-        this.energy = energy;
-    }
-
-    @Deprecated
-    public void setMaxEnergy(double maxEnergy) {
-        this.maxEnergy = maxEnergy;
-    }
-
-    // Getter and setter methods for vision attributes
-    @Deprecated
-    public double getThetaDirection() {
-        return thetaDirection;
-    }
-
-    @Deprecated
-    public void setThetaDirection(double thetaDirection) {
-        this.thetaDirection = thetaDirection;
-    }
-
-    @Deprecated
-    public double[] getPhiVisionDirection() {
-        return phiVisionDirection;
-    }
-
-    @Deprecated
-    public void setPhiVisionDirection(double[] phiVisionDirection) {
-        this.phiVisionDirection = phiVisionDirection;
-    }
-
-    @Deprecated
-    public double getVisionRadius() {
-        return visionRadius;
-    }
-
-    @Deprecated
-    public void setVisionRadius(double visionRadius) {
-        this.visionRadius = visionRadius;
-    }
-
-    @Deprecated
-    public double getDeltaDirection() {
-        return deltaDirection;
-    }
-
-    @Deprecated
-    public void setDeltaDirection(double deltaDirection) {
-        this.deltaDirection = deltaDirection;
-    }
-
-    // Getter and setter methods for reproduction attributes
-    @Deprecated
-    public int getAge() {
-        return age;
-    }
-
-    @Deprecated
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    @Deprecated
-    public int getMaxAge() {
-        return maxAge;
-    }
-
-    @Deprecated
-    public void setMaxAge(int maxAge) {
-        this.maxAge = maxAge;
-    }
-
-    @Deprecated
-    public boolean isAlive() {
-        return isAlive;
-    }
-
-    @Deprecated
-    public void setAlive(boolean isAlive) {
-        this.isAlive = isAlive;
-    }
-
-    @Deprecated
-    public double getEnergyNeededToReproduce() {
-        return energyNeededToReproduce;
-    }
-
-    @Deprecated
-    public void setEnergyNeededToReproduce(double energyNeededToReproduce) {
-        this.energyNeededToReproduce = energyNeededToReproduce;
-    }
-
-    @Deprecated
-    public double getWeightNeededToReproduce() {
-        return weightNeededToReproduce;
-    }
-
-    @Deprecated
-    public void setWeightNeededToReproduce(double weightNeededToReproduce) {
-        this.weightNeededToReproduce = weightNeededToReproduce;
-    }
-
-    @Deprecated
-    public double getSize() {
-        return size;
-    }
-
-    @Deprecated
-    public void setSize(double size) {
-        this.size = size;
-        updateHitbox();
-    }
-
-    @Deprecated
-    public Pos[] getHitbox() {
-        return hitbox;
-    }
-
-    @Deprecated
-    public Pos[] getVisionPoints() {
-        return visionPoints;
+    public double getAverageEnergySpent(){
+        if (energySpendingLog.size() == 0) {return 0.0;}
+        Double sum = 0.0;
+        for (Double d : energySpendingLog){
+            sum += d;
+        }
+        double average = sum / energySpendingLog.size();
+        return average;
     }
 
 }

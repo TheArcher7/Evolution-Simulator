@@ -9,7 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class WorldView extends JPanel{
-    public static boolean DEBUG_MODE = false;
+    public static boolean DEBUG_MODE = true;
 
     private WorldModel world;
 
@@ -38,6 +38,9 @@ public class WorldView extends JPanel{
             g.setColor(food.color);
             if(DEBUG_MODE){
                 drawHitbox(g, food.hitbox);
+
+                String displayString = "" + food.value;
+                //g.drawString(displayString, (int) (food.position.xCoord / zoomFactor + (double) offsetX / zoomFactor), (int) (food.position.yCoord / zoomFactor + (double) offsetY / zoomFactor));
                 continue;
             }
             g.fillOval(
@@ -61,6 +64,9 @@ public class WorldView extends JPanel{
                 drawVisionLines(g, X, Y, organism.visionPoints);
                 g.setColor(Color.BLUE);
                 drawHitbox(g, organism.hitbox);
+
+                String displayString = "" + organism.generation;
+                g.drawString(displayString, (int) (organism.position.xCoord / zoomFactor + (double) offsetX / zoomFactor), (int) ((organism.position.yCoord - organism.size -1) / zoomFactor + (double) offsetY / zoomFactor));
                 continue;
             }
 

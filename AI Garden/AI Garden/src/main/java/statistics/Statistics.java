@@ -16,8 +16,8 @@ public class Statistics {
         log = new ArrayList<>();
     }
 
-    public void update(double delta) {
-        lastTimeUpdated += delta;
+    public void update(double deltaTime) {
+        lastTimeUpdated += deltaTime;
 
         if (lastTimeUpdated >= 1) {
             lastTimeUpdated = 0;
@@ -25,6 +25,16 @@ public class Statistics {
             //add logElement to log
         }
     }
+
+    public void update(int ticks) {
+
+    }
+
+    public void recordNewStatElement(int seconds){
+
+    }
+
+
 
     public void print() { //prints certain log data to the consol. Useful for testing
         

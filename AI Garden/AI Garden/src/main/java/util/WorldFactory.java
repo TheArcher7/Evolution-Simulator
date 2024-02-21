@@ -11,8 +11,9 @@ public class WorldFactory {
         //Set up world and size
         int width = 3520;
         int height = 2470;
-        WorldModel world = new WorldModel(width, height, 1);
-        world.maxFoodAmount = (int) (width * height / 160);
+        WorldModel world = new WorldModel(width, height, 3);
+        double startingFoodAmount = 8000;
+        world.foodDensity = startingFoodAmount / (width * height);
 
         // Example organism usage
         //Pos position = new Pos(0, 0);
@@ -30,11 +31,12 @@ public class WorldFactory {
         }
 
         
-        Food[] foods = new Food[world.maxFoodAmount / 6];
-        for (int i = 0; i < world.maxFoodAmount / 6; i++) {
+        Food[] foods = new Food[world.maxFoodAmount];
+        for (int i = 0; i < world.maxFoodAmount; i++) {
             double posX = width * Math.random();
             double posY = height * Math.random();
             foods[i] = new Food(new Pos(posX, posY), world.maxFoodEnergy, 3);
+            foods[i].age = Food.generateRandomNumber(0, 50);
 
             world.addFood(foods[i]);
         }
