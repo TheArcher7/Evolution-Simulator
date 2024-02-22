@@ -53,4 +53,31 @@ public class LogElement {
         this.averageFoodAge = averageFoodAge;
         this.oldestFoodAge = oldestFoodAge;
     }
+
+    @Override
+    public String toString() {
+        return "LogElement{" +
+            "\npopulation=" + population +
+            "\naverageEnergy=" + averageEnergy +
+            "\naverageWeight=" + averageWeight +
+            "\nheaviestOrganismWeight=" + heaviestOrganismWeight +
+            "\naverageAge=" + averageAge +
+            "\noldestOrganismAge=" + oldestOrganismAge +
+            "\naverageGeneration=" + averageGeneration +
+            "\nnewestGeneration=" + newestGeneration +
+            "\noldestGeneration=" + oldestGeneration +
+            "\naverageVelocity=" + averageVelocity +
+            "\naverageNumChildren=" + averageNumChildren +
+            "\nmostNumChildrenAmount=" + mostNumChildrenAmount +
+            "\naverageNumFoodEaten=" + averageNumFoodEaten +
+            "\nmostNumFoodEaten=" + mostNumFoodEaten +
+            "\naverageEnergySpentPerFood=" + averageEnergySpentPerFood +
+            "\nlowestEnergySpentPerFoodValue=" + lowestEnergySpentPerFoodValue +
+            "\nfoodCount=" + foodCount +
+            "\nmaxFoodAmount=" + maxFoodAmount +
+            "\naverageFoodAge=" + averageFoodAge +
+            "\noldestFoodAge=" + oldestFoodAge +
+            "\n}";
+    }
+
 }

@@ -9,6 +9,7 @@ import java.util.concurrent.Executors;
 import main.java.model.BaseOrganism;
 import main.java.model.Food;
 import main.java.model.WorldModel;
+import main.java.statistics.Statistics;
 import main.java.util.Pos;
 import main.java.view.MainWindow;
 import main.java.view.WorldView;
@@ -18,19 +19,21 @@ public class WorldController {
     private WorldView worldView;
     private MainWindow mainWindow;
     private ExecutorService executor;
+    private Statistics statistics;
 
     private ArrayList<BaseOrganism> childrenToAddToTheSimulation = new ArrayList<>();
 
-    private int ticks = 0;
-    private int seconds = 0;
-    private int minutes = 0;
-    private int hours = 0;
+    public int ticks = 0;
+    public int seconds = 0;
+    public int minutes = 0;
+    public int hours = 0;
 
     // Constructor
-    public WorldController(WorldModel worldModel, WorldView worldView) {
+    public WorldController(WorldModel worldModel, WorldView worldView, Statistics statistics) {
         this.worldModel = worldModel;
         this.worldView = worldView;
         this.executor = Executors.newCachedThreadPool(); // Adjust the thread pool as needed
+        this.statistics = statistics;
     }
 
     /*
@@ -53,17 +56,12 @@ public class WorldController {
         // TODO create more food
         createMoreFood(ticks);
 
-        // TODO create logs every 1 second
-
-        // TODO adjust world values to match  desired values, such as 
-        // lower the mutation rate over time
-        // set maximum_lifespan = AVERAGE_LIFESPAN * 1.6 every hour
-
-        
         ticks++;
         if (ticks > 49) { //triggers every 1 second
             seconds++;
             ticks = 0;
+            // log world statistics
+            statistics.update(executor);
 
             // Optional expand / shrink world over time
             changeWorldArea();
@@ -84,11 +82,14 @@ public class WorldController {
             //optional increase / decrease food energy over time
             changeWorldFoodEnergy();
 
-            
         }
         if (minutes > 58) { //triggers every 1 hour
             hours++;
             minutes = 0;
+
+            // TODO adjust world values to match  desired values, such as 
+            // lower the mutation rate over time
+            // set maximum_lifespan = AVERAGE_LIFESPAN * 1.6 every hour
 
         }
     }
@@ -108,8 +109,14 @@ public class WorldController {
             BaseOrganism organism = organismAiIterator.next();
             
             executor.submit(() -> {
-                organism.ai.update();
-                aiCalculationLatch.countDown(); // Signal completion of AI calculation
+                try {
+                    organism.ai.update();
+                } catch (Exception e) {
+                    // Handle exception here, such as logging
+                    e.printStackTrace();
+                } finally {
+                    aiCalculationLatch.countDown(); // Signal completion of AI calculation
+                }
             });
         }
 
@@ -132,9 +139,15 @@ public class WorldController {
             BaseOrganism organism = organismPositionIterator.next();
 
             executor.submit(() -> {
-                organism.ai.handleMoving();
-                handleEnergyDepletion(organism);
-                movementCalculationLatch.countDown();
+                try {
+                    organism.ai.handleMoving();
+                    handleEnergyDepletion(organism);
+                } catch (Exception e) {
+                    // Handle exception here, such as logging
+                    e.printStackTrace();
+                } finally {
+                    movementCalculationLatch.countDown();
+                }
             });
         }
 
@@ -157,9 +170,15 @@ public class WorldController {
             BaseOrganism organism = organismIterator.next();
 
             executor.submit(() -> {
-                handleFoodIntake(organism);
-                handleReproduction(organism);
-                energyCalculationLatch.countDown();
+                try {
+                    handleFoodIntake(organism);
+                    handleReproduction(organism);
+                } catch (Exception e) {
+                    // Handle exception here, such as logging
+                    e.printStackTrace();
+                } finally {
+                    energyCalculationLatch.countDown();
+                }
             });
         }
 
@@ -211,7 +230,7 @@ public class WorldController {
                 // recording for energy efficiency calculations
                 organism.numFoodEaten++;
                 organism.energySpendingLog.add(organism.energySpentSinceLastEating);
-                organism.energySpentSinceLastEating = 0;
+                organism.energySpentSinceLastEating = 0.0;
 
                 // eat food and restore energy
                 organism.energy += food.value;
@@ -315,6 +334,7 @@ public class WorldController {
 
     // Expand / shrink world over time
     public void changeWorldArea(){
+        //System.out.println("Changing world area size"); //Debug
         if (worldModel.width < worldModel.desiredWidth){
             worldModel.width += 1.75;
             worldModel.height += 1;
@@ -331,6 +351,7 @@ public class WorldController {
 
     // Increase / descrease max food amount over time
     public void changeWorldFoodAmount(){
+        //System.out.println("Changing world food amount"); //Debug
         if (worldModel.maxFoodAmount < worldModel.desiredMaxFoodAmount) {
             worldModel.maxFoodAmount++;
             worldModel.foodDensity = worldModel.maxFoodAmount / (worldModel.width * worldModel.height);
@@ -343,6 +364,7 @@ public class WorldController {
 
     // Increase / decrease food energy over time
     public void changeWorldFoodEnergy(){
+        //System.out.println("Changing world food aenergy"); //Debug
         if (worldModel.maxFoodEnergy < worldModel.desiredMaxFoodEnergy) {
             worldModel.maxFoodEnergy++;
         }

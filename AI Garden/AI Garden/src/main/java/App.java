@@ -78,8 +78,8 @@ public class App implements ActionListener{
         //set up world
         worldModel = WorldFactory.createTestWorld();
         worldView = new WorldView(worldModel);
-        controller = new WorldController(worldModel, worldView);
         statistics = new Statistics(worldModel);
+        controller = new WorldController(worldModel, worldView, statistics);
 
         //listeners
         listener = new WorldInputListener(controller);

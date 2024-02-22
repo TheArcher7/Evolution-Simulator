@@ -151,7 +151,10 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
         String displayString = "";
         displayString += "Organisms: " + model.getOrganisms().size() + "       " + 
                         "Food: "  + model.getFoods().size() + "       " +
-                        "Food Spawning: " + model.ticksPer_FoodSpawn + "*" + model.foodSpawnedPerEvent;
+                        "Food Spawning: " + model.ticksPer_FoodSpawn + "*" + model.foodSpawnedPerEvent + "       " +
+                        "Time: " + String.format("%3d", controller.hours) + ":" + 
+                        String.format("%02d", controller.minutes) + ":" + 
+                        String.format("%02d", controller.seconds);
         textLabel.setText(displayString);
     }
 
@@ -181,6 +184,7 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == closeItem) {
+            statistics.print();
             System.exit(0);
         } else if (e.getSource() == exportStatisticsItem) {
             // TODO export statistics to a csv file

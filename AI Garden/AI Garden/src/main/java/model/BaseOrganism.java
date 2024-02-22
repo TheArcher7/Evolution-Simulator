@@ -41,7 +41,7 @@ public class BaseOrganism {
 
     // Attributes for graphics and statistics
     public double size = 1;
-    public int r = 256, g = 256, b = 256;
+    public int r = 255, g = 255, b = 255;
     public Color color = new Color(0, 0, 255);
     public int numFoodEaten = 0;
     public double energySpentSinceLastEating = 0;
@@ -89,7 +89,7 @@ public class BaseOrganism {
 
         size = 4; // initializes a hitbox with a width and height of size*2 ('size' units away in each cardinal direction)
         thetaDirection = generateRandomDoubleInRange(0, 360);
-        visionRadius = 40;
+        visionRadius = 80;
         phiVisionDirection = new double[]{50.0, 20.0, 0, -20.0, -50.0,};
     }
 
@@ -144,9 +144,9 @@ public class BaseOrganism {
     // Method to generate a random color
     private Color generateRandomColor() {
         Random random = new Random();
-        r = random.nextInt(256); //uses 230 rather than 256 to improve visibility
+        r = random.nextInt(255); //uses 230 rather than 256 to improve visibility
         g = random.nextInt(230);
-        b = random.nextInt(256);
+        b = random.nextInt(255);
         return new Color(r, g, b);
     }
 
@@ -171,9 +171,9 @@ public class BaseOrganism {
         //TODO mutate
 
         // Add a random value between -3 and 3 to each color component
-        newborn.r = Math.max(0, Math.min(256, r + random.nextInt(9) - 3)); // Ensure the value stays within [0, 255]
+        newborn.r = Math.max(0, Math.min(255, r + random.nextInt(9) - 3)); // Ensure the value stays within [0, 255]
         newborn.g = Math.max(0, Math.min(230, g + random.nextInt(9) - 3)); // Ensure the value stays within [0, 230]
-        newborn.b = Math.max(0, Math.min(256, b + random.nextInt(9) - 3)); // Ensure the value stays within [0, 255]
+        newborn.b = Math.max(0, Math.min(255, b + random.nextInt(9) - 3)); // Ensure the value stays within [0, 255]
         newborn.color = new Color(newborn.r, newborn.g, newborn.b);
 
         
