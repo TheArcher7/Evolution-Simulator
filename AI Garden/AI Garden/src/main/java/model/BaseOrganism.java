@@ -5,7 +5,6 @@ import main.java.ai.NeuralNetwork;
 import main.java.util.Pos;
 
 import java.awt.Color;
-import java.awt.List;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -116,20 +115,25 @@ public class BaseOrganism {
         ai = new AI(model, this);
     }
 
+    @Deprecated
     public void changeDirection(double speedOfChange){
         if (speedOfChange <= 0) {speedOfChange = 1;}
         thetaDirection += (deltaDirection * speedOfChange);
         updateVisionPoints();
     }
 
-    // Method to update hitbox based on position and size
+    /**
+     * Method to update hitbox based on position and size
+     */
     public void updateHitbox() {
         double hitboxSize = size;
         hitbox[0] = new Pos(position.xCoord - hitboxSize, position.yCoord - hitboxSize);
         hitbox[1] = new Pos(position.xCoord + hitboxSize, position.yCoord + hitboxSize);
     }
 
-    // Method to update visionPoints based on position, visionRadius, and phiVisionDirection
+    /**
+     * Method to update visionPoints based on position, visionRadius, and phiVisionDirection
+     */
     public void updateVisionPoints() {
         for (int i = 0; i < phiVisionDirection.length; i++) {
             double phi = Math.toRadians(thetaDirection - phiVisionDirection[i]);
@@ -144,7 +148,7 @@ public class BaseOrganism {
     // Method to generate a random color
     private Color generateRandomColor() {
         Random random = new Random();
-        r = random.nextInt(255); //uses 230 rather than 256 to improve visibility
+        r = random.nextInt(255); //uses 230 rather than 255 to improve visibility
         g = random.nextInt(230);
         b = random.nextInt(255);
         return new Color(r, g, b);
@@ -156,7 +160,15 @@ public class BaseOrganism {
         return min + (max - min) * random.nextDouble();
     }
 
+    /**
+     * Returns a BaseOrganism that can be considered to be a "child" 
+     * between the owner organism of this method and another organism passed to it.
+     * 
+     * Gives the child slight mutations.
+     */
     public BaseOrganism reproduce(BaseOrganism otherParent) {
+        //TODO otherParent cannot be a child
+
         // set the attributes of the new child organism
         Pos p = new Pos(position.xCoord, position.yCoord);
         BaseOrganism newborn = new BaseOrganism(p, ai.model);
@@ -168,7 +180,7 @@ public class BaseOrganism {
         newborn.energy = energyNeededToReproduce;
         newborn.weight = weightNeededToReproduce / 2;
 
-        //TODO mutate
+        //TODO more mutations
 
         // Add a random value between -3 and 3 to each color component
         newborn.r = Math.max(0, Math.min(255, r + random.nextInt(9) - 3)); // Ensure the value stays within [0, 255]
@@ -176,7 +188,7 @@ public class BaseOrganism {
         newborn.b = Math.max(0, Math.min(255, b + random.nextInt(9) - 3)); // Ensure the value stays within [0, 255]
         newborn.color = new Color(newborn.r, newborn.g, newborn.b);
 
-        
+        // Mutate the AI
         if (WorldModel.LEARN_ENABLED) {
             // combine the AI of both parents to create new AI for child, mutates the new AI, and sets it for the child
             //AI newbornAI = ai.asexualCrossover(); //ai.crossover(otherParent.ai);
@@ -184,16 +196,16 @@ public class BaseOrganism {
             //newbornAI.setOrganismSelf(newborn);
             //newborn.ai = newbornAI;
 
-            //NeuralNetwork nn = ai.neuralNetwork.crossover(otherParent.ai.neuralNetwork); //FIXME for some reason, doesn't work
+            //NeuralNetwork nnn = ai.neuralNetwork.crossover(otherParent.ai.neuralNetwork); //FIXME doesn't work
             NeuralNetwork nn = new NeuralNetwork(ai.neuralNetwork);
             nn.mutate(ai.model.mutationRate, ai.model.mutationStrength);
             newborn.ai.setNeuralNetwork(nn);
         }
         else {
+            // Copies the AI and nueral network without mutating
             newborn.ai = ai.asexualCrossover();
             newborn.ai.setOrganismSelf(newborn);
         }
-        
         
         recentChild = newborn;
         return newborn;

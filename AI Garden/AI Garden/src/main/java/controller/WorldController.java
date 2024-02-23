@@ -42,7 +42,6 @@ public class WorldController {
 
     public void updateWorld(double deltaTime) {
         if (ticks % 10 == 0){updateAI();}//triggers 5 times per second
-        //TODO process AI on a rotation
 
         //moves the organism and calculates their energy depletion
         moveOrganisms();
@@ -60,16 +59,19 @@ public class WorldController {
         if (ticks > 49) { //triggers every 1 second
             seconds++;
             ticks = 0;
-            // log world statistics
-            statistics.update(executor);
+
+            statistics.update(executor); // log world statistics
+            
 
             // Optional expand / shrink world over time
             changeWorldArea();
 
             // Optional increase / descrease max food amount over time
-            changeWorldFoodAmount();
+            changeWorldFoodAmount(); 
+            //TODO toggleable flexible food regeneration (increases food regen rate when population is low, decreases rate when it is high, tries to keep population within certain bounds)
 
-            //TODO increase the age of entities
+            // increase the age of entities
+            increaseAges();
 
             // Optional 
 
@@ -78,6 +80,9 @@ public class WorldController {
             minutes++;
             seconds = 0;
             System.out.println(worldModel.width + " " + worldModel.height);
+
+            //TODO check if there are organisms in the system. If there are none, then terminate gracefully or restart the simulation with fresh.
+            //TODO 
 
             //optional increase / decrease food energy over time
             changeWorldFoodEnergy();
@@ -100,6 +105,7 @@ public class WorldController {
      */
 
     private void updateAI() {
+        // TODO this is an intensive process. Make it so that only a part of the organisms are updated. Process them on a rotation
         // Create a countdown latch to synchronize AI calculations
         CountDownLatch aiCalculationLatch = new CountDownLatch(worldModel.getOrganisms().size());
 
@@ -129,6 +135,10 @@ public class WorldController {
         }
     }
 
+    /**
+     * Activates the organism's AI method for moving the organisms.
+     * Calls each organism in its own thread.
+     */
     private void moveOrganisms(){
         // Create a countdown latch to synchronize the movement calculations
         CountDownLatch movementCalculationLatch = new CountDownLatch(worldModel.getOrganisms().size());
@@ -266,7 +276,7 @@ public class WorldController {
             double distance;
             BaseOrganism organism2;
             BaseOrganism kid = organism;
-            //select the other parent by selecting the closest organism
+            //select the other parent by selecting the closest organism TODO better selection mechanism
             Iterator<BaseOrganism> organismIterator = worldModel.getOrganisms().iterator();
             while (organismIterator.hasNext()){
                 organism2 = organismIterator.next();
@@ -329,6 +339,15 @@ public class WorldController {
                         worldModel.maxFoodEnergy, 
                         3));
                 }
+        }
+    }
+
+    private void increaseAges(){
+        for (BaseOrganism o : worldModel.getOrganisms()) {
+            o.age++;
+        }
+        for (Food f : worldModel.getFoods()) {
+            f.age++;
         }
     }
 

@@ -17,6 +17,14 @@ public class NeuralNetwork {
     //private NeuralNetwork(){}
 
     // Constructor
+    /**
+     * For a list of {i, 12, 8, 4, numOutputs}, 
+     * the neural network will have i input nodes, 
+     * 12 nodes in the first hidden layer,
+     * 8 nodes in the second hidden layer, 
+     * 4 nodes in the next hidden layer, 
+     * and numOutputs (technically in the last hidden layer)
+     */
     public NeuralNetwork(int... layers){
         activations = new double[layers.length][];
         hiddenLayers = new HiddenLayer[layers.length -1];
@@ -29,7 +37,9 @@ public class NeuralNetwork {
         }
     }
 
-    // Constructor for copying a NeuralNetwork to a new NeuralNetwork
+    /**
+     *Constructor for copying a NeuralNetwork to a new NeuralNetwork
+     */
     public NeuralNetwork(NeuralNetwork other) {
         generationVersion = other.generationVersion;
         filename = other.filename;
@@ -96,7 +106,10 @@ public class NeuralNetwork {
         return activations[activations.length - 1];
     }
 
-    //There is something wrong with this method, but I can't figure out what or why
+    // TODO figure out what is wrong with this crossover method
+    /*
+     * This method returns a new NeuralNetwork, copying half from the owner and copying the other half from the other.
+     */
     @Deprecated
     public NeuralNetwork crossover(NeuralNetwork other) { 
         NeuralNetwork clone = new NeuralNetwork(this);

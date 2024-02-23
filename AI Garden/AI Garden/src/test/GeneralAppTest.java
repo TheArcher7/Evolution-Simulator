@@ -10,6 +10,7 @@ import main.java.util.Pos;
 
 
 public class GeneralAppTest {
+    double DELTA = 0.00000000001;
 
     @Test
     public void testBaseOrganism_UpdateHitbox() {
@@ -40,7 +41,6 @@ public class GeneralAppTest {
         // Assert visionPoints with an accuracy of 3 decimals
         Pos[] visionPoints = organism.visionPoints;
         assertEquals(roundPoint(new Pos(2.298, 1.928)), roundPoint(visionPoints[0]));
-        //TODO add tests
     }
     
     // Helper method to round a Point to 3 decimal places
@@ -57,7 +57,7 @@ public class GeneralAppTest {
         Pos pos2 = new Pos(3, 4);
 
         double distance = pos.distanceTo(pos2); //should be 5.0
-        assertEquals(5.0, distance);
+        assertEquals(5.0, distance, DELTA);
     }
 
     @Test

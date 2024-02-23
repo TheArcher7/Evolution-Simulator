@@ -45,7 +45,7 @@ public class AI {
         }
 
         if (i > 24)     {neuralNetwork = new NeuralNetwork(i, i, i-8, i-16, numOutputs);}
-        else if (i > 10) {neuralNetwork = new NeuralNetwork(i, 12, 8, 4, numOutputs);} // the neural network will have i input nodes, 12 nodes in the first hidden layer, 8 nodes in the second hidden layer, 4 nodes in the next hidden layer, and numOutputs (technically in the last hidden layer)
+        else if (i > 10) {neuralNetwork = new NeuralNetwork(i, 12, 8, 4, numOutputs);} 
         else if (i > 6) {neuralNetwork = new NeuralNetwork(i, 4, 3, numOutputs);}
         else            {neuralNetwork = new NeuralNetwork(i, i, numOutputs);}
 
@@ -251,6 +251,9 @@ public class AI {
         organismSelf.updateVisionPoints();
     }
 
+    /**
+     * Creates an copy of the AI and neural network within without mutating it.
+     */
     public AI asexualCrossover(){
         NeuralNetwork n = new NeuralNetwork(neuralNetwork);
         AI a = new AI(this);
@@ -258,6 +261,10 @@ public class AI {
         return a;
     }
 
+    /**
+     * Creates a new AI with a new neural network, half copied from this AI and the other half copied from the otherAI.
+     * This does not mutate anything.
+     */
     public AI crossover(AI otherAI) {
         NeuralNetwork n = neuralNetwork.crossover(otherAI.neuralNetwork);
         AI a = new AI(this);

@@ -39,7 +39,7 @@ public class WorldView extends JPanel{
             if(DEBUG_MODE){
                 drawHitbox(g, food.hitbox);
 
-                String displayString = "" + food.value;
+                //String displayString = "" + food.value;
                 //g.drawString(displayString, (int) (food.position.xCoord / zoomFactor + (double) offsetX / zoomFactor), (int) (food.position.yCoord / zoomFactor + (double) offsetY / zoomFactor));
                 continue;
             }
