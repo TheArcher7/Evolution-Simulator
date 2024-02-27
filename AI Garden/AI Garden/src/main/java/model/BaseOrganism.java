@@ -70,7 +70,7 @@ public class BaseOrganism {
 
     public void initializeStandardOrganism(){
         deltaDirection = generateRandomDoubleInRange(-1, 1);
-        velocity = generateRandomDoubleInRange(-1, 1);
+        velocity = 0;
 
         color = generateRandomColor();
         generation = 0;
@@ -214,6 +214,38 @@ public class BaseOrganism {
 
     //TODO add methods for toString() equals() and more
 
+    /**
+     * Method for returning a string representation of the attributes of the world
+     * to be saved in a text file.
+     */
+    public String getSerialization(String organismNameOrID){
+        StringBuilder builder = new StringBuilder();
+        builder.append("BaseOrganism " + organismNameOrID + System.lineSeparator());
+        
+        //append organism data
+        String organismData = 
+                "weight " + weight +
+                " maxEnergy " + maxEnergy +
+                " age " + age + " size " + size + " generation " + generation + 
+                " energyNeededToReproduce " + energyNeededToReproduce + 
+                " weightNeededToReproduce " + weightNeededToReproduce +
+                " colorR " + r + " colorG " + g + " colorB " + b + 
+                " maxVelocity " + maxVelocity + " maxDeltaDirection " + maxDeltaDirection +
+                " visionRadius " + visionRadius + " phiVisionDirection[] " + phiVisionDirection.length;
+        builder.append(organismData);
+        for (double d : phiVisionDirection) {
+            builder.append(" " + d);
+        }
+        builder.append(System.lineSeparator());
+
+        //append ai data
+        builder.append(ai.getSerialization());
+
+        //append world data (some organism's adaptations may be specific to an environment)
+
+
+        return builder.toString();
+    }
 
 
 

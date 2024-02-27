@@ -30,7 +30,7 @@ public class WorldFactory {
             world.addOrganism(o);
         }
 
-        
+        // Create food
         Food[] foods = new Food[world.maxFoodAmount];
         for (int i = 0; i < world.maxFoodAmount; i++) {
             double posX = width * Math.random();

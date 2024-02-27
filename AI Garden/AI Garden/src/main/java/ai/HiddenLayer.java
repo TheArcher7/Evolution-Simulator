@@ -1,5 +1,6 @@
 package main.java.ai;
 
+import java.text.DecimalFormat;
 
 //references
 //https://youtu.be/cpYRGNT41Go?si=7gqZuaSCCe5LO3x-
@@ -64,8 +65,41 @@ public class HiddenLayer {
 
     @Override
     public String toString() {
-        String title = String.format("HiddenLayer[%d][%d]:", weights.length, weights[0].length);
-        return title; //TODO better toString()
+        return toString(""); 
+    }
+
+    public String toString(String indent) {
+        StringBuilder builder = new StringBuilder();
+
+        //Format the weights first
+        int wLength = weights.length;
+        int w0Length = weights[0].length;
+        builder.append(indent);
+        builder.append(String.format("hl_Weights %d %d", wLength, w0Length));
+        builder.append(System.lineSeparator());
+        for (int i = 0; i < wLength; i++) {
+            builder.append(indent);
+            for (int j = 0; j < w0Length; j++) {
+                if(j > 0)
+                    builder.append(",");
+                builder.append(weights[i][j]);
+            }
+            builder.append(System.lineSeparator());
+        }
+
+        //Format the biases second
+        int bLength = biases.length;
+        builder.append(indent);
+        builder.append(String.format("hl_Biases %d", bLength));
+        builder.append(System.lineSeparator());
+        for (int i = 0; i < bLength; i++) {
+            builder.append(indent);
+            if(i > 0)
+                builder.append(",");
+            builder.append(biases[i]);
+        }
+        builder.append(System.lineSeparator());
+        return builder.toString(); 
     }
 
     public double[] getBiases() {
@@ -75,4 +109,5 @@ public class HiddenLayer {
     public double[][] getWeights() {
         return weights;
     }
+
 }

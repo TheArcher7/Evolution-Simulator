@@ -14,8 +14,8 @@ public class AI {
     public final int numInputsPerVisionLine; // The number of input nodes that each vision line occupies. Should be 2
     public final int numOutputs;           // The number of outputs expected from the neural network. Should be 2
         // Inputs: each vision line inputs a value for the identity of the item and its distance from the organism, so two input nodes
-        // Outputs: the outputs expected from this AI are a deltaDirection (-1 .. 1) and a velocity (-1 .. 1)
-    public final int numExtraInputs; //things like the weight and energy of the organism (basically, self awareness)
+        // Outputs: the outputs expected from this AI are a deltaDirection (-1 .. 1) and a velocity (0 .. 1)
+    public final int numExtraInputs; //things like the weight and energy of the organism that provide it with self awareness
 
     // Constructor
     public AI(WorldModel model, BaseOrganism organism) {
@@ -231,7 +231,7 @@ public class AI {
         // This should only modify the deltaDirection and the velocity of the organism
         // the output is 0..1 and must be transformed into -1..1
         organismSelf.deltaDirection = outputs[0] * 2.0 - 1.0; //(-1..1) can rotate left or right
-        organismSelf.velocity = outputs[1]; // * 2.0 - 1.0; //(0..1) can only move forward
+        organismSelf.velocity = outputs[1]; //(0..1) can only move forward
 
     }
     
@@ -283,5 +283,10 @@ public class AI {
 
     public void setOrganismSelf(BaseOrganism organismSelf) {
         this.organismSelf = organismSelf;
+    }
+
+
+    public String getSerialization() {
+        return neuralNetwork.getSerialization();
     }
 }

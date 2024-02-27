@@ -173,7 +173,7 @@ public class NeuralNetwork {
 
     @Override
     public String toString() {
-        return "NeuralNetwork toString() not implemented";
+        return "NeuralNetwork toString() not implemented"; //TODO better toString() for NeuralNetwork
     }
 
     public void printActivations(){
@@ -185,6 +185,16 @@ public class NeuralNetwork {
             }
             System.out.println();
         }
+    }
+
+    public String getSerialization() {
+        StringBuilder builder = new StringBuilder();
+
+        builder.append("NeuralNetwork " + hiddenLayers.length + System.lineSeparator());
+        for (HiddenLayer h : hiddenLayers) {
+            builder.append(h.toString());
+        }
+        return builder.toString();
     }
 
     public HiddenLayer[] getHiddenLayers() {

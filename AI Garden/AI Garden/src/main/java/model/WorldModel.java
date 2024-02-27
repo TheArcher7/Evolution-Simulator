@@ -27,9 +27,9 @@ public class WorldModel {
     public static boolean useLocalMutationRate = false; //if true, then organisms can determin their own mutation rate
     public static double speedFactor = 1;
 
-    public boolean useLifespan = false; //if enabled, will kill organisms and food older than a certain age
+    public boolean useLifespan = true; //if enabled, will kill organisms and food older than a certain age
     public int lifespan = 120;
-    public int food_lifespan = 60;
+    public int food_lifespan = 120;
 
     private final List<BaseOrganism> organisms;
     private final List<Food> foods;
@@ -94,5 +94,14 @@ public class WorldModel {
     // Method to remove food from the list
     public void removeFood(Food food) {
         foods.remove(food);
+    }
+
+    /**
+     * Method for returning a string representation of the attributes of the world
+     * to be saved in a text file.
+     */
+    public String getSerialization(){
+
+        return "";
     }
 }

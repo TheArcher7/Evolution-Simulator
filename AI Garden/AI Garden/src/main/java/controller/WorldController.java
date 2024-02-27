@@ -2,6 +2,7 @@ package main.java.controller;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -81,8 +82,7 @@ public class WorldController {
             seconds = 0;
             System.out.println(worldModel.width + " " + worldModel.height);
 
-            //TODO check if there are organisms in the system. If there are none, then terminate gracefully or restart the simulation with fresh.
-            //TODO 
+            //TODO check if there are organisms in the system. If there are none, then terminate gracefully or restart the simulation either from checkpoint or from new.
 
             //optional increase / decrease food energy over time
             changeWorldFoodEnergy();
@@ -104,15 +104,27 @@ public class WorldController {
      * Methods for calculating the organisms and interractions in the world
      */
 
+    private int updateAICount = 0;
+    private int updateAISizeFrequencyTicks = 5;
     private void updateAI() {
-        // TODO this is an intensive process. Make it so that only a part of the organisms are updated. Process them on a rotation
-        // Create a countdown latch to synchronize AI calculations
-        CountDownLatch aiCalculationLatch = new CountDownLatch(worldModel.getOrganisms().size());
+        // Only a part of the organisms are updated. Process AI on a rotation
+        int startIndex, endIndex;
+        if (worldModel.getOrganisms().size() < 100) {
+            startIndex = 0;
+            endIndex = worldModel.getOrganisms().size();
+        }
+        else{
+            startIndex = (updateAICount * worldModel.getOrganisms().size()) / updateAISizeFrequencyTicks;
+            endIndex = ((updateAICount + 1) * worldModel.getOrganisms().size()) / updateAISizeFrequencyTicks;
+        }
+        updateAICount = (updateAICount + 1) % updateAISizeFrequencyTicks;
 
-        // Update the AI
-        Iterator<BaseOrganism> organismAiIterator = worldModel.getOrganisms().iterator();
-        while (organismAiIterator.hasNext()){
-            BaseOrganism organism = organismAiIterator.next();
+        // Create a countdown latch to synchronize AI calculations
+        CountDownLatch aiCalculationLatch = new CountDownLatch(endIndex - startIndex);
+
+        // Update the AI for organisms within the current tick's range
+        List<BaseOrganism> organismsToUpdate = worldModel.getOrganisms().subList(startIndex, endIndex);
+        for (BaseOrganism organism : organismsToUpdate){
             
             executor.submit(() -> {
                 try {
@@ -307,8 +319,7 @@ public class WorldController {
             if (food.value < 1) {
                 foodIterator.remove();
             }
-
-            if (worldModel.useLifespan && food.age > worldModel.food_lifespan) {
+            else if (worldModel.useLifespan && food.age > worldModel.food_lifespan) {
                 foodIterator.remove();
             }
         }
@@ -320,10 +331,10 @@ public class WorldController {
             if (organism.energy < 1) {
                 organismIterator.remove();
             }
-            if (organism.weight < 1) {
+            else if (organism.weight < 1) {
                 organismIterator.remove();
             }
-            if (worldModel.useLifespan && organism.age > organism.maxAge) {
+            else if (worldModel.useLifespan && organism.age > organism.maxAge) {
                 organismIterator.remove();
             }
         }

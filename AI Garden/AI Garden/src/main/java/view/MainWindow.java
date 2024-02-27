@@ -4,10 +4,12 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import org.apache.commons.io.FilenameUtils;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import main.java.controller.WorldController;
@@ -184,11 +186,38 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == closeItem) {
+
+            //debug printing statistics to consol
             statistics.print();
+
+            //test printing the nn to the consol
+            //String nnOut = model.getOrganisms().get(0).ai.neuralNetwork.getSerialization();
+            //System.out.println(nnOut);
+
             System.exit(0);
-        } else if (e.getSource() == exportStatisticsItem) {
-            // TODO export statistics to a csv file
-        } else if (e.getSource() == createWorldItem) {
+        } 
+        
+        else if (e.getSource() == exportStatisticsItem) {
+            JFileChooser fileChooser = new JFileChooser();
+            FileNameExtensionFilter txtFilter = new FileNameExtensionFilter("Text files (*.txt)", "txt");
+            fileChooser.setFileFilter(txtFilter);
+        
+            if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+                File file = fileChooser.getSelectedFile();
+                if (fileChooser.getFileFilter() == txtFilter &&
+                        !FilenameUtils.getExtension(file.getName()).equalsIgnoreCase("txt")) {
+                    file = new File(file.toString() + ".txt");
+                }
+                try {
+                    statistics.saveBestOrganism(file);
+                } catch (IOException ioe) {
+                    ioe.printStackTrace();
+                }
+            }
+        }
+        
+        
+        else if (e.getSource() == createWorldItem) {
             //new CreateWorldView(worldCreator);
         } else if (e.getSource() == createCreatureItem) {
             //new CreateCreatureView(controller, worldModel.getWidth(), worldModel.getHeight());

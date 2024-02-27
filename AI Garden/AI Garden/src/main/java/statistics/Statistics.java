@@ -1,5 +1,8 @@
 package main.java.statistics;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -16,6 +19,7 @@ public class Statistics {
 
     // Statistics about the organisms (copied from LogElement)
     public int population;
+    public double timeHours;
 
     public double averageEnergy;
     public double averageWeight;
@@ -66,7 +70,7 @@ public class Statistics {
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
-                calculationLatch.countDown(); // Signal completion of calculation
+                calculationLatch.countDown(); // Signal completion of calculation 1
             }
         });
         executor.submit(() -> {
@@ -75,7 +79,7 @@ public class Statistics {
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
-                calculationLatch.countDown(); // Signal completion of calculation
+                calculationLatch.countDown(); // Signal completion of calculation 2
             }
         });
         executor.submit(() -> {
@@ -84,7 +88,7 @@ public class Statistics {
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
-                calculationLatch.countDown(); // Signal completion of calculation
+                calculationLatch.countDown(); // Signal completion of calculation 3
             }
         });
         executor.submit(() -> {
@@ -93,7 +97,7 @@ public class Statistics {
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
-                calculationLatch.countDown(); // Signal completion of calculation
+                calculationLatch.countDown(); // Signal completion of calculation 4
             }
         });
 
@@ -109,7 +113,8 @@ public class Statistics {
 
     public void recordNewStatElement(){
         log.add(new LogElement(
-            population, 
+            population,
+            timeHours,
             averageEnergy, 
             averageWeight, 
             heaviestOrganismWeight, 
@@ -135,6 +140,7 @@ public class Statistics {
     public void population(){
         List<Food> food = worldModel.getFoods();
         population = worldModel.getOrganisms().size();
+        timeHours = log.size() / 60.0 / 60.0;
         foodCount = food.size();
         maxFoodAmount = worldModel.maxFoodAmount;
         averageFoodAge = 0;
@@ -238,4 +244,20 @@ public class Statistics {
         System.out.println(l.toString());
     }
 
+
+    public void saveBestOrganism(File file) throws IOException{
+        FileWriter writer = new FileWriter(file);
+        try {
+            //chose an organism
+            BaseOrganism organism = worldModel.getOrganisms().get(0); //TODO save best organism rather than first organism
+
+            //write organism to file
+            writer.write(organism.getSerialization(file.getName()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        finally {
+            writer.close();
+        }
+    }
 }
