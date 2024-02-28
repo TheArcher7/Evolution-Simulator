@@ -26,6 +26,7 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
 
     // Text labels and widgets
     private JLabel textLabel;
+    private JLabel populationStatisticsLabel;
     private JLabel speedLabel;
     private JSlider speedSlider;
     private JLabel maxFoodLabel;
@@ -36,12 +37,14 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
     // File Menu
     private JMenu fileMenu;
     private JMenuItem exportStatisticsItem;
+    private JMenuItem saveOrganismToFile;
+    private JMenuItem saveWorldStateToFile;
     private JMenuItem closeItem;
     // World Menu
     private JMenu worldMenu;
-    private JMenuItem createWorldItem;
-    private JMenuItem createCreatureItem;
-    private JMenuItem createCreaturesItem;
+    private JMenuItem createOrganism; // spawns a randomly generated organism
+    private JMenuItem loadOrganismFromFile;
+    private JMenuItem loadWorldFromFile;
     // Statistics Menu
     private JMenu statisticsMenu;
     private JMenuItem showStatisticsItem;
@@ -112,29 +115,49 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
 
         add(splitPane);
 
+        /*
+         * Menu Bar
+         */
         mainMenuBar = new JMenuBar();
 
+        //File menu (saving and exiting)
         fileMenu = new JMenu("File");
+        // Export statistics
         exportStatisticsItem = new JMenuItem("Export Statistics");
         exportStatisticsItem.addActionListener(this);
-        closeItem = new JMenuItem("Close");
-        closeItem.addActionListener(this);
         fileMenu.add(exportStatisticsItem);
         fileMenu.addSeparator();
+        // Save organism
+        saveOrganismToFile = new JMenuItem("Save Organism To File");
+        saveOrganismToFile.addActionListener(this);
+        fileMenu.add(saveOrganismToFile);
+        // Save world
+        saveWorldStateToFile = new JMenuItem("Save World To File");
+        saveWorldStateToFile.addActionListener(this);
+        fileMenu.add(saveWorldStateToFile);
+        fileMenu.addSeparator();
+        // Close
+        closeItem = new JMenuItem("Close");
+        closeItem.addActionListener(this);
         fileMenu.add(closeItem);
 
+        // World menu (loading from file and generating)
         worldMenu = new JMenu("Creation");
-        createWorldItem = new JMenuItem("Create World");
-        createWorldItem.addActionListener(this);
-        worldMenu.add(createWorldItem);
+        // Create Organism
+        createOrganism = new JMenuItem("Create Randomized Organism");
+        createOrganism.addActionListener(this);
+        worldMenu.add(createOrganism);
         worldMenu.addSeparator();
-        createCreatureItem = new JMenuItem("Create Creature");
-        createCreatureItem.addActionListener(this);
-        worldMenu.add(createCreatureItem);
-        createCreaturesItem = new JMenuItem("Create Creatures");
-        createCreaturesItem.addActionListener(this);
-        worldMenu.add(createCreaturesItem);
-
+        // Load Organism
+        loadOrganismFromFile = new JMenuItem("Load Organism From File");
+        loadOrganismFromFile.addActionListener(this);
+        worldMenu.add(loadOrganismFromFile);
+        // Load World
+        loadWorldFromFile = new JMenuItem("Load World From File");
+        loadWorldFromFile.addActionListener(this);
+        worldMenu.add(loadWorldFromFile);
+        
+        // Statistics Menu
         statisticsMenu = new JMenu("Statistics");
         showStatisticsItem = new JMenuItem("Show Statistics");
         showStatisticsItem.addActionListener(this);
@@ -152,7 +175,7 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
         String displayString = "";
         displayString += "Organisms: " + model.getOrganisms().size() + "       " + 
                         "Food: "  + model.getFoods().size() + "       " +
-                        "Food Spawning: " + model.ticksPer_FoodSpawn + "*" + model.foodSpawnedPerEvent + "       " +
+                        "Rate: " + model.foodSpawnedPerEvent + " Food /" + model.ticksPer_FoodSpawn + " Ticks       " +
                         "Time: " + String.format("%3d", controller.hours) + ":" + 
                         String.format("%02d", controller.minutes) + ":" + 
                         String.format("%02d", controller.seconds);
@@ -184,6 +207,7 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        // TODO convert this to a switch structure
         if (e.getSource() == closeItem) {
 
             //debug printing statistics to consol
@@ -197,6 +221,11 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
         } 
         
         else if (e.getSource() == exportStatisticsItem) {
+            System.out.println("Export statistics button clicked");
+        }
+
+        else if (e.getSource() == saveOrganismToFile) {
+            // Uses a file choosing API
             JFileChooser fileChooser = new JFileChooser();
             FileNameExtensionFilter txtFilter = new FileNameExtensionFilter("Text files (*.txt)", "txt");
             fileChooser.setFileFilter(txtFilter);
@@ -208,22 +237,34 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
                     file = new File(file.toString() + ".txt");
                 }
                 try {
-                    statistics.saveBestOrganism(file);
+                    statistics.saveBestOrganism(file); //write an organism's data to the file chosen
                 } catch (IOException ioe) {
                     ioe.printStackTrace();
                 }
             }
         }
+
+        else if (e.getSource() == saveWorldStateToFile) {
+            System.out.println("Save world to file button clicked");
+        }
         
         
-        else if (e.getSource() == createWorldItem) {
-            //new CreateWorldView(worldCreator);
-        } else if (e.getSource() == createCreatureItem) {
+        else if (e.getSource() == createOrganism) {
             //new CreateCreatureView(controller, worldModel.getWidth(), worldModel.getHeight());
-        } else if (e.getSource() == createCreaturesItem) {
-            //new CreateCreaturesView(controller, worldModel.getWidth(), worldModel.getHeight());
-        } else if (e.getSource() == showStatisticsItem) {
-            
+            // TODO create a random organism, preferably in the center of the screen to allow for user "placement"
+            System.out.println("Create organism button clicked");
+        } 
+
+        else if (e.getSource() == loadOrganismFromFile) {
+            System.out.println("Load organism from file button clicked");
+        }
+
+        else if (e.getSource() == loadWorldFromFile) {
+            System.out.println("Load world from file button clicked");
+        }
+
+        else if (e.getSource() == showStatisticsItem) {
+            System.out.println("Show statistics button clicked");
         }
     }
 

@@ -60,43 +60,34 @@ public class WorldController {
         if (ticks > 49) { //triggers every 1 second
             seconds++;
             ticks = 0;
-
-            statistics.update(executor); // log world statistics
-            
-
-            // Optional expand / shrink world over time
             changeWorldArea();
-
-            // Optional increase / descrease max food amount over time
             changeWorldFoodAmount(); 
             //TODO toggleable flexible food regeneration (increases food regen rate when population is low, decreases rate when it is high, tries to keep population within certain bounds)
-
-            // increase the age of entities
             increaseAges();
 
-            // Optional 
 
-        }
-        if (seconds > 58) { //Triggers every 1 minute
-            minutes++;
-            seconds = 0;
-            System.out.println(worldModel.width + " " + worldModel.height);
+            if (seconds > 58) { //Triggers every 1 minute
+                minutes++;
+                seconds = 0;
+                //TODO check if there are organisms in the system. If there are none, then terminate gracefully or restart the simulation either from checkpoint or from new.
+                changeWorldFoodEnergy();
 
-            //TODO check if there are organisms in the system. If there are none, then terminate gracefully or restart the simulation either from checkpoint or from new.
 
-            //optional increase / decrease food energy over time
-            changeWorldFoodEnergy();
+                if (minutes > 58) { //triggers every 1 hour
+                    hours++;
+                    minutes = 0;
 
-        }
-        if (minutes > 58) { //triggers every 1 hour
-            hours++;
-            minutes = 0;
+                    // TODO adjust world values to match  desired values, such as 
+                    // lower the mutation rate over time
+                    // set maximum_lifespan = AVERAGE_LIFESPAN * 1.6 every hour
 
-            // TODO adjust world values to match  desired values, such as 
-            // lower the mutation rate over time
-            // set maximum_lifespan = AVERAGE_LIFESPAN * 1.6 every hour
+                }
+                
+                statistics.print();
+            } //1 minute
 
-        }
+            statistics.update(executor); // log world statistics
+        } //1 second
     }
 
 
