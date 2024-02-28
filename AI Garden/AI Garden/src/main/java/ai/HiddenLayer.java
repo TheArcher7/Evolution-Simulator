@@ -1,7 +1,5 @@
 package main.java.ai;
 
-import java.text.DecimalFormat;
-
 //references
 //https://youtu.be/cpYRGNT41Go?si=7gqZuaSCCe5LO3x-
 

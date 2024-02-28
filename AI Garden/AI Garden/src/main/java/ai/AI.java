@@ -3,7 +3,6 @@ package main.java.ai;
 import main.java.model.BaseOrganism;
 import main.java.model.Food;
 import main.java.model.WorldModel;
-import main.java.util.Pos;
 
 public class AI {
     public final WorldModel model;

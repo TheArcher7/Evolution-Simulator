@@ -2,7 +2,6 @@
     "java.project.sourcePaths": ["src"],
     "java.project.outputPath": "bin",
     "java.project.referencedLibraries": [
-        "lib/**/*.jar",
-        "c:\\Users\\micah\\.gradle\\caches\\modules-2\\files-2.1\\commons-io\\commons-io\\2.11.0\\a2503f302b11ebde7ebc3df41daebe0e4eea3689\\commons-io-2.11.0.jar"
+        "lib/**/*.jar"
     ]
 }
