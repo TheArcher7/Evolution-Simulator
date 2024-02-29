@@ -42,7 +42,7 @@ public class WorldController {
      */
 
     public void updateWorld(double deltaTime) {
-        if (ticks % 10 == 0){updateAI();}//triggers 5 times per second
+        updateAI();
 
         //moves the organism and calculates their energy depletion
         moveOrganisms();
@@ -81,6 +81,10 @@ public class WorldController {
                     // lower the mutation rate over time
                     // set maximum_lifespan = AVERAGE_LIFESPAN * 1.6 every hour
 
+                    //Decrease mutation rate and strength over time to get even more finely tuned AI
+                    worldModel.mutationRate *= 0.95;
+                    worldModel.mutationStrength *= 0.9;
+                    //starting with a mutation strength of 0.1, after 10 hours, the strength will be 0.034867
                 }
                 
                 statistics.print();

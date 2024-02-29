@@ -52,7 +52,7 @@ public class App implements ActionListener{
         if (timer != null && timer.isRunning()) {timer.stop();}
 
         //set up world
-        worldModel = WorldFactory.createTestWorld();
+        worldModel = WorldFactory.createAverageWorld();
         worldView = new WorldView(worldModel);
         statistics = new Statistics(worldModel);
         controller = new WorldController(worldModel, worldView, statistics);
