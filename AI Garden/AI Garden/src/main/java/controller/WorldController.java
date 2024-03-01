@@ -28,6 +28,7 @@ public class WorldController {
     public int seconds = 0;
     public int minutes = 0;
     public int hours = 0;
+    public boolean isNotPaused = true;
 
     // Constructor
     public WorldController(WorldModel worldModel, WorldView worldView, Statistics statistics) {
@@ -60,7 +61,7 @@ public class WorldController {
         if (ticks > 49) { //triggers every 1 second
             seconds++;
             ticks = 0;
-            changeWorldArea();
+            changeWorldArea(); 
             changeWorldFoodAmount(); 
             //TODO toggleable flexible food regeneration (increases food regen rate when population is low, decreases rate when it is high, tries to keep population within certain bounds)
             increaseAges();
@@ -69,6 +70,7 @@ public class WorldController {
             if (seconds > 58) { //Triggers every 1 minute
                 minutes++;
                 seconds = 0;
+                System.out.println("Width:" + worldModel.width + " Height:" + worldModel.height);
                 //TODO check if there are organisms in the system. If there are none, then terminate gracefully or restart the simulation either from checkpoint or from new.
                 changeWorldFoodEnergy();
 
@@ -85,7 +87,7 @@ public class WorldController {
                     worldModel.mutationRate *= 0.95;
                     worldModel.mutationStrength *= 0.9;
                     //starting with a mutation strength of 0.1, after 10 hours, the strength will be 0.034867
-                }
+                } //1 hour
                 
                 statistics.print();
             } //1 minute
@@ -449,5 +451,32 @@ public class WorldController {
 
     public void setViewInputFocus() {
         mainWindow.setViewInputFocus();
+    }
+
+    public void togglePaused(){
+        if (isNotPaused) {
+            isNotPaused = false;
+            System.out.println("Pausing");
+        }
+        else {
+            isNotPaused = true;
+            System.out.println("Resuming");
+        }
+    }
+
+    public void clearOrganisms() {
+        //clearing should reset time, statistics logs, and pause for convenience
+        worldModel.clearOrganisms();
+        
+        if (isNotPaused)
+            togglePaused();
+        ticks = 0;
+        seconds = 0;
+        minutes = 0;
+        hours = 0;
+    }
+
+    public void addOrganism(BaseOrganism o) {
+        worldModel.addOrganism(o);
     }
 }

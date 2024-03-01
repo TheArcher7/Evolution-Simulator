@@ -57,18 +57,10 @@ public class NeuralNetwork {
         }
     }
 
-    // TODO create a constructor for copying a NN with a sight mutation
-    /*
-    public NeuralNetwork(NeuralNetwork other, double mutationRate){
-        // copy the weights and biases
-        // add or subtract a little from the weights and biases based on the mutation rate
-        // use the error function to keep the final weights and biases within -1 and 1
-    } */
-
     // Constructor for loading a neural network from a file
     public NeuralNetwork(String filename) {
         // TODO load NeuralNetwork from a file
-        this.filename = filename;
+        this.filename = filename; 
     }
 
     public double[] process(double[] inputs) {
@@ -199,5 +191,9 @@ public class NeuralNetwork {
 
     public HiddenLayer[] getHiddenLayers() {
         return hiddenLayers;
+    }
+
+    public void setHiddenLayers(HiddenLayer[] hiddenLayers) {
+        this.hiddenLayers = hiddenLayers;
     }
 }

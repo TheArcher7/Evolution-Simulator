@@ -85,7 +85,9 @@ public class App implements ActionListener{
 
         worldView.repaint();
         mainWindow.update(delta);
-        controller.updateWorld(delta);
+
+        if (controller.isNotPaused)
+            controller.updateWorld(delta);
     }
 
 }

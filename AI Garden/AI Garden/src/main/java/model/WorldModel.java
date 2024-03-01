@@ -104,4 +104,9 @@ public class WorldModel {
 
         return "";
     }
+
+
+    public void clearOrganisms() {
+        organisms.clear();
+    }
 }

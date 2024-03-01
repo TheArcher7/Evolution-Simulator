@@ -50,6 +50,7 @@ public class Statistics {
         log = new ArrayList<>();
     }
 
+    @Deprecated
     public void update(double deltaTime) {
         lastTimeUpdated += deltaTime;
 
@@ -218,12 +219,14 @@ public class Statistics {
         for (BaseOrganism o : list) {
             averageVelocity += (o.velocity * o.maxVelocity);
             averageNumFoodEaten += o.numFoodEaten;
+
             individualAverageEnergySpent = o.getAverageEnergySpent(); //returns the average energy an individual organisms spends while searching for food
             averageEnergySpentPerFood += individualAverageEnergySpent;
             if (o.numFoodEaten > mostNumFoodEaten) {
                 mostNumFoodEaten = o.numFoodEaten;
             }
-            if (individualAverageEnergySpent < lowestEnergySpentPerFoodValue) {
+            if (individualAverageEnergySpent < lowestEnergySpentPerFoodValue && individualAverageEnergySpent != 0
+             && o.energySpendingLog.size() > 4) {
                 lowestEnergySpentPerFoodValue = individualAverageEnergySpent;
             }
         }

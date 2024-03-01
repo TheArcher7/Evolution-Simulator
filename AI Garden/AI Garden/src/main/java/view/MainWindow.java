@@ -5,6 +5,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOExceptionList;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,8 +14,10 @@ import java.io.File;
 import java.io.IOException;
 
 import main.java.controller.WorldController;
+import main.java.model.BaseOrganism;
 import main.java.model.WorldModel;
 import main.java.statistics.Statistics;
+import main.java.util.FileLoader;
 
 public class MainWindow extends JFrame implements ActionListener, ChangeListener {
     private WorldView view;
@@ -45,6 +49,9 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
     private JMenuItem createOrganism; // spawns a randomly generated organism
     private JMenuItem loadOrganismFromFile;
     private JMenuItem loadWorldFromFile;
+    private JMenuItem clearOrganisms;
+    private JMenuItem clearFood;
+    private JMenuItem pausePlay;
     // Statistics Menu
     private JMenu statisticsMenu;
     private JMenuItem showStatisticsItem;
@@ -142,7 +149,7 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
         fileMenu.add(closeItem);
 
         // World menu (loading from file and generating)
-        worldMenu = new JMenu("Creation");
+        worldMenu = new JMenu("World");
         // Create Organism
         createOrganism = new JMenuItem("Create Randomized Organism");
         createOrganism.addActionListener(this);
@@ -156,6 +163,20 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
         loadWorldFromFile = new JMenuItem("Load World From File");
         loadWorldFromFile.addActionListener(this);
         worldMenu.add(loadWorldFromFile);
+        worldMenu.addSeparator();
+        // Clear world organisms
+        clearOrganisms = new JMenuItem("Clear Organisms");
+        clearOrganisms.addActionListener(this);
+        worldMenu.add(clearOrganisms);
+        // Clear world food
+        clearFood = new JMenuItem("Clear Food");
+        clearFood.addActionListener(this);
+        worldMenu.add(clearFood);
+        // Pause Play
+        pausePlay = new JMenuItem("Pause/Resume");
+        pausePlay.addActionListener(this);
+        worldMenu.add(pausePlay);
+
         
         // Statistics Menu
         statisticsMenu = new JMenu("Statistics");
@@ -256,7 +277,35 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
         } 
 
         else if (e.getSource() == loadOrganismFromFile) {
-            System.out.println("Load organism from file button clicked");
+
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Choose a text file");
+
+            int returnValue = fileChooser.showOpenDialog(null);
+
+            if (returnValue == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = fileChooser.getSelectedFile();
+                try {
+                    BaseOrganism o = FileLoader.readOrganismFromFile(selectedFile, model);
+                    controller.addOrganism(o);
+                    System.out.println("Loaded a new organism into world.");
+                }catch (IOException ioe) {
+                    ioe.printStackTrace();
+                }
+            }
+        }
+
+        else if (e.getSource() == clearOrganisms) {
+            System.out.println("Clear organisms button clicked");
+            controller.clearOrganisms();
+        }
+
+        else if (e.getSource() == clearFood) { //TODO maybe replace with a restart world command
+            System.out.println("Clear food button clicked");
+        }
+
+        else if (e.getSource() == pausePlay) {
+            controller.togglePaused();
         }
 
         else if (e.getSource() == loadWorldFromFile) {

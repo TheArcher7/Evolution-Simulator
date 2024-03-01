@@ -8,7 +8,10 @@ public class HiddenLayer {
     private double[] biases;
 
     // Constructor for deserialization
-    //private HiddenLayer() {}
+    public HiddenLayer(double[][] weights, double[] biases) {
+        this.weights = weights;
+        this.biases = biases;
+    }
 
     // Constructor
     public HiddenLayer(int currentLayerSize, int previousLayerSize) {
