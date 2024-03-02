@@ -19,6 +19,7 @@ public class BaseOrganism {
     public int generation; //0 means original, 1 means the offspring of the original, 2 means the offspring of the offspring, and so on...
     public int maxAge;
     public boolean isAlive;
+    public boolean isBestOrganism = false;
 
     public double energyNeededToReproduce;
     public double weightNeededToReproduce;

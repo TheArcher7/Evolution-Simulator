@@ -63,6 +63,8 @@ public class WorldView extends JPanel{
                 g.setColor(Color.BLUE);
                 drawHitbox(g, organism.hitbox);
                 g.setColor(Color.RED);
+                if(organism.isBestOrganism)
+                    g.setColor(Color.BLACK);
                 drawVisionLines(g, X, Y, organism.visionPoints);
 
                 String displayString = "" + organism.generation;

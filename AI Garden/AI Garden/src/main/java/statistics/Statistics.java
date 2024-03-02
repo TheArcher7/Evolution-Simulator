@@ -45,6 +45,15 @@ public class Statistics {
     public int averageFoodAge;
     public int oldestFoodAge;
 
+    // Best organisms
+    private BaseOrganism oGluttony; //gluttony (most food eaten)
+    private BaseOrganism oLust; //lust (most children)
+    private BaseOrganism oSloth; //sloth (most efficient traveler)
+    private BaseOrganism oPride; //pride (item collecting not implemented)
+    private BaseOrganism oGreed; //greed (oldest)
+    private BaseOrganism oWrath; //wrath (murder not implemented)
+    private BaseOrganism oEnvy; //envy (oldest generation)
+
     public Statistics(WorldModel worldModel) {
         this.worldModel = worldModel;
         log = new ArrayList<>();
@@ -64,6 +73,9 @@ public class Statistics {
     public void update(ExecutorService executor) {
         // Create a countdown latch to synchronize AI calculations
         CountDownLatch calculationLatch = new CountDownLatch(4);
+
+        for (BaseOrganism o : worldModel.getOrganisms())
+            o.isBestOrganism = false;
 
         executor.submit(() -> {
             try {
@@ -106,10 +118,20 @@ public class Statistics {
         try {
             calculationLatch.await();
             recordNewStatElement();
+
+            // Mark the best performing organisms
+            try{oGluttony.isBestOrganism = true;} catch (Exception e){} finally {}
+            try{oLust.isBestOrganism = true;} catch (Exception e){} finally {}
+            try{oSloth.isBestOrganism = true;} catch (Exception e){} finally {}
+            try{oPride.isBestOrganism = true;} catch (Exception e){} finally {}
+            try{oGreed.isBestOrganism = true;} catch (Exception e){} finally {}
+            try{oWrath.isBestOrganism = true;} catch (Exception e){} finally {}
+            try{oEnvy.isBestOrganism = true;} catch (Exception e){} finally {}
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             e.printStackTrace();
         }
+
     }
 
     public void recordNewStatElement(){
@@ -191,15 +213,18 @@ public class Statistics {
             averageNumChildren += o.numChildren;
             if (o.age > oldestOrganismAge) {
                 oldestOrganismAge = o.age;
+                oGreed = o;
             }
             if (o.generation < oldestGeneration) {
                 oldestGeneration = o.generation;
+                oEnvy = o;
             }
             if (o.generation > newestGeneration) {
                 newestGeneration = o.generation;
             }
             if (o.numChildren > mostNumChildrenAmount) {
                 mostNumChildrenAmount = o.numChildren;
+                oLust = o;
             }
         }
         averageAge = averageAge / list.size();
@@ -224,10 +249,12 @@ public class Statistics {
             averageEnergySpentPerFood += individualAverageEnergySpent;
             if (o.numFoodEaten > mostNumFoodEaten) {
                 mostNumFoodEaten = o.numFoodEaten;
+                oGluttony = o;
             }
             if (individualAverageEnergySpent < lowestEnergySpentPerFoodValue && individualAverageEnergySpent != 0
              && o.energySpendingLog.size() > 4) {
                 lowestEnergySpentPerFoodValue = individualAverageEnergySpent;
+                oSloth = o;
             }
         }
         averageVelocity = averageVelocity / list.size();
@@ -258,14 +285,6 @@ public class Statistics {
                     organism = o;
                 }
             }
-
-            //gluttony (ate most food)
-            //lust (most children)
-            //sloth (most efficient traveler)
-            //pride (fastest)
-            //greed (oldest)
-            //wrath
-            //envy
 
             //write organism to file
             writer.write(organism.getSerialization(file.getName()));
