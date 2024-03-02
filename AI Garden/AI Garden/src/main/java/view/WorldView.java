@@ -39,8 +39,6 @@ public class WorldView extends JPanel{
             if(DEBUG_MODE){
                 drawHitbox(g, food.hitbox);
 
-                //String displayString = "" + food.value;
-                //g.drawString(displayString, (int) (food.position.xCoord / zoomFactor + (double) offsetX / zoomFactor), (int) (food.position.yCoord / zoomFactor + (double) offsetY / zoomFactor));
                 continue;
             }
             g.fillOval(
@@ -78,6 +76,8 @@ public class WorldView extends JPanel{
             g.fillOval( X - R, Y - R, 2 * R, 2 * R);
 
             // Draw the outtermost and center vision lines
+            if(organism.isBestOrganism)
+                    g.setColor(Color.BLACK);
             drawVisionLines(g, X, Y, 
                 new Pos[]{
                     organism.visionPoints[0],
