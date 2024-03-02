@@ -27,7 +27,7 @@ public class WorldModel {
     public static boolean useLocalMutationRate = false; //if true, then organisms can determin their own mutation rate
     public static double speedFactor = 1;
 
-    public boolean useLifespan = true; //if enabled, will kill organisms and food older than a certain age
+    public boolean useLifespan = false; //if enabled, will kill organisms and food older than a certain age
     public int lifespan = 120;
     public int food_lifespan = 120;
 

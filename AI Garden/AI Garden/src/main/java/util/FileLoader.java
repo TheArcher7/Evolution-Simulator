@@ -66,7 +66,7 @@ public class FileLoader {
                         size = Double.parseDouble(tokens[i + 1]);
                         break;
                     case "generation":
-                        //generation = Integer.parseInt(tokens[i + 1]); //newly loaded organisms start without knowledge of previous generations
+                        generation = Integer.parseInt(tokens[i + 1]); //Perhaps start them at gen 0
                         break;
                     case "energyNeededToReproduce":
                         energyNeededToReproduce = Double.parseDouble(tokens[i + 1]);

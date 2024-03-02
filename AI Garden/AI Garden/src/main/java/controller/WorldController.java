@@ -79,9 +79,10 @@ public class WorldController {
                     hours++;
                     minutes = 0;
 
-                    // TODO adjust world values to match  desired values, such as 
-                    // lower the mutation rate over time
                     // set maximum_lifespan = AVERAGE_LIFESPAN * 1.6 every hour
+                    //worldModel.useLifespan = true;
+                    worldModel.lifespan = statistics.averageAge * 5;
+                    worldModel.food_lifespan = statistics.averageFoodAge * 5;
 
                     //Decrease mutation rate and strength over time to get even more finely tuned AI
                     worldModel.mutationRate *= 0.95;
@@ -467,7 +468,7 @@ public class WorldController {
     public void clearOrganisms() {
         //clearing should reset time, statistics logs, and pause for convenience
         worldModel.clearOrganisms();
-        
+
         if (isNotPaused)
             togglePaused();
         ticks = 0;

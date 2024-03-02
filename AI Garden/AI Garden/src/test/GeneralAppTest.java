@@ -90,4 +90,7 @@ public class GeneralAppTest {
         System.out.println(b); //should be true
     }
 
+    //TODO other tests
+    //neural network comparison. Are neural networks being mutated?
+    //file save testing. Are neural networks being saved correctly to file, and loaded from file?
 }  
