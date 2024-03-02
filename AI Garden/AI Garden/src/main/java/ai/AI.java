@@ -205,7 +205,7 @@ public class AI {
     //calculate distance and prepare values inside the inputs[] for the neural network
     private void detected(int visionLineIndex, Food f) {
         int index = visionLineIndex * numInputsPerVisionLine;
-        double distance = organismSelf.position.distanceTo(f.position);
+        double distance = organismSelf.visionRadius - organismSelf.position.distanceTo(f.position); //numbers get bigger the closer it gets, which may be easier for the AI to interpret
         if (inputs[index] == 0 || inputs[index] > distance) {
             inputs[index] = distance;
             inputs[index + 1] = 1.0; //f.value; //TODO test if f.value or 1.0 works better as inputs
@@ -216,10 +216,10 @@ public class AI {
     //calculate distance and prepare values inside the inputs[] for the neural network
     private void detected(int visionLineIndex, BaseOrganism o) {
         int index = visionLineIndex * numInputsPerVisionLine;
-        double distance = organismSelf.position.distanceTo(o.position);
+        double distance = organismSelf.visionRadius - organismSelf.position.distanceTo(o.position);
         if (inputs[index] == 0 || inputs[index] > distance) {
             inputs[index] = distance;
-            inputs[index + 1] = -1.0; //TODO change input to reflect the organism's type, such as herbivore (0.1) vs predatore (-1.0)
+            inputs[index + 1] = -1.0; //TODO change input to reflect the organism's type, such as herbivore (0.1) vs predatore (-1.0), or its color values
             return;
         }
     }

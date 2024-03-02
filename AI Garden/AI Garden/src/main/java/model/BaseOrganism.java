@@ -76,7 +76,7 @@ public class BaseOrganism {
         generation = 0;
 
         maxVelocity = 2.0;
-        maxDeltaDirection = 3.0;
+        maxDeltaDirection = 6.0;
         weight = 300.0;
         maxEnergy = 3200.0;
         energy = maxEnergy / 2; // Start with half full energy
@@ -88,8 +88,8 @@ public class BaseOrganism {
 
         size = 4; // initializes a hitbox with a width and height of size*2 ('size' units away in each cardinal direction)
         thetaDirection = generateRandomDoubleInRange(0, 360);
-        visionRadius = 80;
-        phiVisionDirection = new double[]{50.0, 20.0, 0, -20.0, -50.0,};
+        visionRadius = 120;
+        phiVisionDirection = new double[]{50.0, 30.0, 20.0, 10.0, 0, -10.0, -20.0, -30.0, -50.0,};
     }
 
     private void initVision() {

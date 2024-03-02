@@ -107,7 +107,7 @@ public class WorldController {
     private void updateAI() {
         // Only a part of the organisms are updated. Process AI on a rotation
         int startIndex, endIndex;
-        if (worldModel.getOrganisms().size() < 100) {
+        if (worldModel.getOrganisms().size() < 800) {
             startIndex = 0;
             endIndex = worldModel.getOrganisms().size();
         }
