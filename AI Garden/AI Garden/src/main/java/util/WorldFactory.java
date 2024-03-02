@@ -58,7 +58,7 @@ public class WorldFactory {
         WorldModel world = new WorldModel(width, height, 3);
         world.foodDensity = startingFoodAmount / (width * height);
         world.width *= 1.1;
-        world.desiredWidth = 9000;
+        world.desiredWidth = 8000;
         world.height *= 1.1;
         world.maxFoodAmount = (int) ((world.width * world.height) * world.foodDensity);
         world.desiredMaxFoodAmount = 8500;
