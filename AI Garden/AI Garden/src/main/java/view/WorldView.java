@@ -60,10 +60,10 @@ public class WorldView extends JPanel{
             Y = (int) (organism.position.yCoord / zoomFactor) + offsetY / zoomFactor;
 
             if(DEBUG_MODE){
-                g.setColor(Color.RED);
-                drawVisionLines(g, X, Y, organism.visionPoints);
                 g.setColor(Color.BLUE);
                 drawHitbox(g, organism.hitbox);
+                g.setColor(Color.RED);
+                drawVisionLines(g, X, Y, organism.visionPoints);
 
                 String displayString = "" + organism.generation;
                 g.drawString(displayString, (int) (organism.position.xCoord / zoomFactor + (double) offsetX / zoomFactor), (int) ((organism.position.yCoord - organism.size -1) / zoomFactor + (double) offsetY / zoomFactor));

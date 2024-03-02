@@ -4,8 +4,11 @@ import java.io.File;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
+import java.util.ArrayList;
 
 import main.java.ai.HiddenLayer;
+import main.java.ai.NeuralNetwork;
 import main.java.model.BaseOrganism;
 import main.java.model.WorldModel;
 
@@ -119,6 +122,7 @@ public class FileLoader {
             o.maxDeltaDirection = maxDeltaDirection;
             o.visionRadius = visionRadius;
             o.phiVisionDirection = phiVisionDirection;
+            o.resetVisionPoints();
 
             /*
              * read the AI data
@@ -131,6 +135,7 @@ public class FileLoader {
             int hiddenLayerCount = Integer.parseInt(words[1]);
 
             HiddenLayer[] layers = new HiddenLayer[hiddenLayerCount];
+            List<Integer> ls = new ArrayList<>();
 
             for (int i = 0; i < hiddenLayerCount; i++) {
                 lineString = reader.readLine();
@@ -140,6 +145,7 @@ public class FileLoader {
                 }
                 int weightsLinesToRead = Integer.parseInt(words[1]); //current layer size
                 int weightsPerLine = Integer.parseInt(words[2]); //previous layer size (num biases)
+                ls.add(weightsPerLine);
                 
                 double[][] weights = new double[weightsLinesToRead][weightsPerLine];
                 for (int j = 0; j < weightsLinesToRead; j++) {
@@ -169,7 +175,15 @@ public class FileLoader {
                 layers[i] = hl;
             }
 
-            o.ai.neuralNetwork.setHiddenLayers(layers);
+            ls.add(o.ai.numOutputs);
+            int[] l = new int[ls.size()];
+            for (int i = 0; i < l.length; i++) {
+                l[i] = ls.get(i);
+            }
+            NeuralNetwork n = new NeuralNetwork(l); //ensures nn has appropriate activation lengths
+            n.setHiddenLayers(layers);
+            o.ai.neuralNetwork = n;
+            o.ai.resetNumInputs();
 
         } catch (IOException e) {
             throw new IOException(e.getMessage());

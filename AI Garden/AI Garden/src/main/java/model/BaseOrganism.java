@@ -144,6 +144,12 @@ public class BaseOrganism {
             visionPoints[i] = new Pos(xCoord, yCoord);
         }
     }
+    public void resetVisionPoints(){
+        if (visionPoints.length != phiVisionDirection.length) {
+            visionPoints = new Pos[phiVisionDirection.length];
+            updateVisionPoints();
+        }
+    }
 
     // Method to generate a random color
     private Color generateRandomColor() {
@@ -169,9 +175,11 @@ public class BaseOrganism {
     public BaseOrganism reproduce(BaseOrganism otherParent) {
         //TODO otherParent cannot be a child
 
-        // set the attributes of the new child organism
+        // set the attributes of the new child organism according to the primary parent
         Pos p = new Pos(position.xCoord, position.yCoord);
         BaseOrganism newborn = new BaseOrganism(p, ai.model);
+        newborn.phiVisionDirection = this.phiVisionDirection;
+        newborn.resetVisionPoints();
         newborn.generation = generation + 1;
         numChildren++;
 
@@ -200,6 +208,7 @@ public class BaseOrganism {
             NeuralNetwork nn = new NeuralNetwork(ai.neuralNetwork);
             nn.mutate(ai.model.mutationRate, ai.model.mutationStrength);
             newborn.ai.setNeuralNetwork(nn);
+            newborn.ai.resetNumInputs();
         }
         else {
             // Copies the AI and nueral network without mutating

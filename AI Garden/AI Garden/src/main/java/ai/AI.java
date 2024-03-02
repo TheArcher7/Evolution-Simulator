@@ -4,6 +4,9 @@ import main.java.model.BaseOrganism;
 import main.java.model.Food;
 import main.java.model.WorldModel;
 
+import java.util.List;
+import java.util.ArrayList;
+
 public class AI {
     public final WorldModel model;
     private BaseOrganism organismSelf;
@@ -67,6 +70,51 @@ public class AI {
         x1 = organismSelf.position.xCoord;
         y1 = organismSelf.position.yCoord;
 
+        //TODO, create a list of all food and organisms in sight range, then use that list to check food. It should be much cheaper than the method below which checks every organism and food for each vision line
+        List<BaseOrganism> organismsInSight = new ArrayList<>();
+        List<Food> foodInSight = new ArrayList<>();
+        
+        double minX, maxX, minY, maxY;
+        minX = organismSelf.position.xCoord;
+        maxX = minX;
+        minY = organismSelf.position.yCoord;
+        maxY = minY;
+        for (int i = 1; i < organismSelf.visionPoints.length; i++) {
+            double tempx = organismSelf.visionPoints[i].xCoord;
+            double tempy = organismSelf.visionPoints[i].yCoord;
+            if (tempx < minX) {minX = tempx;} 
+            else if (tempx > maxX) {maxX = tempx;}
+            if (tempy < minY) {minY = tempy;} 
+            else if (tempy > maxY) {maxY = tempy;}
+        }
+
+        otherOrganismInSightLoop :
+        for (BaseOrganism o : model.getOrganisms()) {
+            if (o.equals(organismSelf)){continue otherOrganismInSightLoop;}
+            a = o.hitbox[0].xCoord;
+            m = o.hitbox[0].yCoord;
+            b = o.hitbox[1].xCoord;
+            n = o.hitbox[1].yCoord;
+            if(outsideOfRange(minY, maxY, m, n) || outsideOfRange(minX, maxX, a, b)) {
+                continue otherOrganismInSightLoop;
+            }
+            organismsInSight.add(o);
+        }
+
+        isFoodInSightLoop :
+        for (Food f : model.getFoods()) {
+            a = f.hitbox[0].xCoord;
+            m = f.hitbox[0].yCoord;
+            b = f.hitbox[1].xCoord;
+            n = f.hitbox[1].yCoord;
+            if(outsideOfRange(minY, maxY, m, n) || outsideOfRange(minX, maxX, a, b)) {
+                continue isFoodInSightLoop;
+            }
+            foodInSight.add(f);
+        }
+
+
+
         for (int i = 0; i < organismSelf.visionPoints.length; i++){
             for (int j = 0; j < numInputsPerVisionLine; j++) {
                 inputs[i * numInputsPerVisionLine + j] = 0.0;
@@ -74,19 +122,15 @@ public class AI {
             x2 = organismSelf.visionPoints[i].xCoord;
             y2 = organismSelf.visionPoints[i].yCoord;
 
-            // check all organisms in the simulation
+            // check all organisms in sight range for intersections
             organismDetectionLoop : 
-            for (BaseOrganism o : model.getOrganisms()) {
+            for (BaseOrganism o : organismsInSight) {
                 if (o.equals(organismSelf)){continue organismDetectionLoop;}
 
                 a = o.hitbox[0].xCoord;
                 m = o.hitbox[0].yCoord;
                 b = o.hitbox[1].xCoord;
-                n = o.hitbox[1].yCoord; 
-
-                if(outsideOfRange(y1, y2, m, n) || outsideOfRange(x1, x2, a, b)) {
-                    continue organismDetectionLoop;
-                }
+                n = o.hitbox[1].yCoord;
  
                 // checking for vertical lines because you can't divide by 0
                 if (isBetween(x1, a, b) && isBetween(x2, a, b)) {
@@ -133,17 +177,13 @@ public class AI {
                 }
             }
         
-            // check all food in the simulation
+            // check all food in the sight range for intersections
             foodDetectionLoop :
-            for (Food f : model.getFoods()) {
+            for (Food f : foodInSight) {
                 a = f.hitbox[0].xCoord;
                 m = f.hitbox[0].yCoord;
                 b = f.hitbox[1].xCoord;
                 n = f.hitbox[1].yCoord;
-
-                if(outsideOfRange(y1, y2, m, n) || outsideOfRange(x1, x2, a, b)) {
-                    continue foodDetectionLoop;
-                }
 
                 // checking for vertical lines because you can't divide by 0
                 if (isBetween(x1, a, b) && isBetween(x2, a, b)) {
@@ -278,6 +318,11 @@ public class AI {
 
     public void setNeuralNetwork(NeuralNetwork neuralNetwork){
         this.neuralNetwork = neuralNetwork;
+    }
+
+    public void resetNumInputs(){
+        int numInputs = organismSelf.visionPoints.length * numInputsPerVisionLine + numExtraInputs;
+        this.inputs = new double[numInputs];
     }
 
     public void setOrganismSelf(BaseOrganism organismSelf) {
