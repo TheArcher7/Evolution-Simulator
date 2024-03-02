@@ -77,8 +77,8 @@ public class BaseOrganism {
 
         maxVelocity = 2.0;
         maxDeltaDirection = 6.0;
-        weight = 300.0;
-        maxEnergy = 3200.0;
+        weight = 400.0;
+        maxEnergy = 6200.0;
         energy = maxEnergy / 2; // Start with half full energy
         age = 0;
         maxAge = 120;
