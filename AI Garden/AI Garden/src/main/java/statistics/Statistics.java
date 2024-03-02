@@ -252,7 +252,20 @@ public class Statistics {
         FileWriter writer = new FileWriter(file);
         try {
             //chose an organism
-            BaseOrganism organism = worldModel.getOrganisms().get(0); //TODO save best organism rather than first organism
+            BaseOrganism organism = worldModel.getOrganisms().get(0);
+            for (BaseOrganism o : worldModel.getOrganisms()) {
+                if (o.numChildren > organism.numChildren) {
+                    organism = o;
+                }
+            }
+
+            //gluttony (ate most food)
+            //lust (most children)
+            //sloth (most efficient traveler)
+            //pride (fastest)
+            //greed (oldest)
+            //wrath
+            //envy
 
             //write organism to file
             writer.write(organism.getSerialization(file.getName()));
