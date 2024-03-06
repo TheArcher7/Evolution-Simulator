@@ -266,6 +266,9 @@ public class Statistics {
     public LogElement getTopLogElement() {
         return log.get(log.size() - 1);
     }
+    public List<LogElement> getLog() {
+        return log;
+    }
 
 
     public void print() { //prints the latest log data to the consol. Useful for testing

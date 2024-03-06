@@ -89,15 +89,18 @@ public class WorldView extends JPanel{
             R = (int) (organismRadius / zoomFactor);
             g.fillOval( X - R, Y - R, 2 * R, 2 * R);
 
-            // Draw the outtermost and center vision lines
+            // Draw the vision lines
             if((showGluttony && organism.gluttony)
                 || (showLust && organism.lust)
                 || (showSloth && organism.sloth)
                 || (showPride && organism.pride)
                 || (showGreed && organism.greed)
                 || (showWrath && organism.wrath)
-                || (showEnvy && organism.envy))
+                || (showEnvy && organism.envy)) {
                     g.setColor(Color.BLACK);
+                    drawVisionLines(g, X, Y, organism.visionPoints);
+                    continue;
+                }
             drawVisionLines(g, X, Y, 
                 new Pos[]{
                     organism.visionPoints[0],

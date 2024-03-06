@@ -12,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import main.java.controller.WorldController;
 import main.java.model.BaseOrganism;
@@ -49,6 +50,9 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
     private JLabel worldSizeLabel;
     private JLabel worldSizeSliderLabel;
     private JSlider worldSizeSlider;
+    //
+    private JCheckBox doAgingToggle;
+
 
     // UI for statistics display
     private JLabel averagesStatisticsLabel;
@@ -66,6 +70,8 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
     private JCheckBox box_mostEfficient;
     private JCheckBox box_oldest;
     private JCheckBox box_oldestGeneration;
+    //
+    private JCheckBox debugToggle;
 
     // Menus
     private JMenuBar mainMenuBar;
@@ -166,6 +172,16 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
         maxFoodContainer.add(maxFoodSpinner);
         maxFoodContainer.add(maxFoodSpinnerLabel);
 
+        /*
+         * Toggles for aging and debug
+         */
+        doAgingToggle = new JCheckBox(" Kill organisms older than ", model.useLifespan);
+        doAgingToggle.setAlignmentX(Component.LEFT_ALIGNMENT);
+        doAgingToggle.addChangeListener(this);
+        //
+        debugToggle = new JCheckBox(" Show Debug View ", view.DEBUG_MODE);
+        debugToggle.setAlignmentX(Component.LEFT_ALIGNMENT);
+        debugToggle.addChangeListener(this);
 
         /*
          * Statistics for averages
@@ -236,6 +252,9 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
         //
         rightContainer.add(maxFoodLabel);
         rightContainer.add(maxFoodContainer);
+        //
+        rightContainer.add(doAgingToggle);
+        rightContainer.add(debugToggle);
 
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, view, rightContainer);
         splitPane.setResizeWeight(0.8);
@@ -339,9 +358,9 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
         }
         worldSizeSliderLabel.setText(Strings.worldSizeSliderLabelText + desiredWidthLabel);
 
-        //TODO max food label changes to reflect what the actual maximum food amount is
-
         maxFoodLabel.setText(model.maxFoodAmount + " Maximum Food");
+
+        doAgingToggle.setText(" Kill organisms older than " + model.lifespan);
 
         LogElement topLog;
         try{
@@ -365,12 +384,12 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
         } catch (Exception e) {
             //System.out.println("Error with checkboxes. MainWindow { public void update(){}}");
         } 
-        //Note: These try-catch blocks throw a lot of errors upon startup because there are no logElements in the statistics object yet FIXME
+        //Note: These try-catch blocks throw a lot of errors upon startup because there are no logElements in the statistics object until later FIXME
     }
 
     @Override
     public void stateChanged(ChangeEvent e) {
-        if (e.getSource() == speedSlider && !isExternalUpdate) {
+        if (e.getSource() == speedSlider && !isExternalUpdate) { //TODO remove
             JSlider source = (JSlider) e.getSource();
             int value = source.getValue();
 
@@ -407,6 +426,15 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
             view.showEnvy = source.isSelected();
         }
 
+        else if (e.getSource() == doAgingToggle) {
+            JCheckBox source = (JCheckBox) e.getSource();
+            model.useLifespan = source.isSelected();
+        }
+        else if (e.getSource() == debugToggle) {
+            JCheckBox source = (JCheckBox) e.getSource();
+            view.DEBUG_MODE = source.isSelected();
+        }
+
     }
 
     public void setSpeedSlider(double d) {
@@ -421,21 +449,13 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        // TODO convert this to a switch structure
         if (e.getSource() == closeItem) {
-
-            //debug printing statistics to consol
-            statistics.print();
-
-            //test printing the nn to the consol
-            //String nnOut = model.getOrganisms().get(0).ai.neuralNetwork.getSerialization();
-            //System.out.println(nnOut);
-
             System.exit(0);
         } 
         
         else if (e.getSource() == exportStatisticsItem) {
-            System.out.println("Export statistics button clicked");
+            System.out.println("Export statistics button clicked. Not Implemented");
+            //TODO
         }
 
         else if (e.getSource() == saveOrganismToFile) {
@@ -459,7 +479,8 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
         }
 
         else if (e.getSource() == saveWorldStateToFile) {
-            System.out.println("Save world to file button clicked");
+            System.out.println("Save world to file button clicked. Not implemented.");
+            //TODO
         }
         
         
@@ -506,7 +527,7 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
         }
 
         else if (e.getSource() == showStatisticsItem) {
-            System.out.println("Show statistics button clicked");
+            new StatisticsView(new ArrayList<>(statistics.getLog()));
         }
     }
 
