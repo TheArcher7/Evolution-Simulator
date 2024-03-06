@@ -19,6 +19,7 @@ public class BaseOrganism {
     public int generation; //0 means original, 1 means the offspring of the original, 2 means the offspring of the offspring, and so on...
     public int maxAge;
     public boolean isAlive;
+
     public boolean isBestOrganism = false;
 
     public double energyNeededToReproduce;
@@ -47,6 +48,14 @@ public class BaseOrganism {
     public double energySpentSinceLastEating = 0;
     public ArrayList<Double> energySpendingLog = new ArrayList<>(); //TODO, record energy efficiencies so that an average efficiency can be found
     public int numChildren = 0;
+
+    public boolean gluttony = false;//ate the most food
+    public boolean lust = false;    //most children
+    public boolean sloth = false;   //most efficient traveling
+    public boolean pride = false;   //oldest
+    public boolean greed = false;   //item gathering not implemented
+    public boolean wrath = false;   //murder not implemented
+    public boolean envy = false;    //oldest generation
 
 
     // Constructors
@@ -268,6 +277,18 @@ public class BaseOrganism {
         }
         double average = sum / energySpendingLog.size();
         return average;
+    }
+
+    public void resetStatusToFalse() {
+        isBestOrganism = false;
+
+        gluttony = false;
+        lust = false;
+        sloth = false;
+        pride = false;
+        greed = false;
+        wrath = false;
+        envy = false;
     }
 
 }

@@ -16,8 +16,10 @@ import java.io.IOException;
 import main.java.controller.WorldController;
 import main.java.model.BaseOrganism;
 import main.java.model.WorldModel;
+import main.java.statistics.LogElement;
 import main.java.statistics.Statistics;
 import main.java.util.FileLoader;
+import main.java.util.Strings;
 
 public class MainWindow extends JFrame implements ActionListener, ChangeListener {
     private WorldView view;
@@ -33,8 +35,37 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
     private JLabel populationStatisticsLabel;
     private JLabel speedLabel;
     private JSlider speedSlider;
+
+
+    // UI for world control
     private JLabel maxFoodLabel;
+    private JLabel maxFoodSpinnerLabel;
     private JSpinner maxFoodSpinner;
+    private JLabel foodspawnTicksLabel;
+    private JLabel foodspawnTicksSpinner;
+    private JLabel foodspawnCountLabel;
+    private JLabel foodspawnCountSpinner;
+    //
+    private JLabel worldSizeLabel;
+    private JLabel worldSizeSliderLabel;
+    private JSlider worldSizeSlider;
+
+    // UI for statistics display
+    private JLabel averagesStatisticsLabel;
+    private JLabel averageEnergy;
+    private JLabel averageWeight;
+    private JLabel averageFoodEaten;
+    private JLabel averageNumChildren;
+    private JLabel averageEnergySpentPerFood;
+    private JLabel averageAge;
+    private JLabel newestGeneration;
+    //
+    private JLabel bestOrganismStatisticsLabel;
+    private JCheckBox box_mostFoodEaten;
+    private JCheckBox box_mostChildren;
+    private JCheckBox box_mostEfficient;
+    private JCheckBox box_oldest;
+    private JCheckBox box_oldestGeneration;
 
     // Menus
     private JMenuBar mainMenuBar;
@@ -85,6 +116,9 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
         textLabel = new JLabel("Organisms");
         textLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
+        /*
+         * Speed slider and label (Not needed anymore)
+         */
         speedLabel = new JLabel("Speed");
         speedLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
@@ -97,24 +131,110 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
         speedSlider.setPaintTicks(true);
         speedSlider.addChangeListener(this);
 
+        /*
+         * World Size label and slider
+         */
+        worldSizeLabel = new JLabel(Strings.worldSizeLabelText);
+        //
+        worldSizeSliderLabel = new JLabel(Strings.worldSizeSliderLabelText);
+        //
+        worldSizeSlider = new JSlider(3000, 15000, (int) model.desiredWidth);
+        worldSizeSlider.setAlignmentX(Component.LEFT_ALIGNMENT);
+        worldSizeSlider.setMajorTickSpacing(3000);
+        worldSizeSlider.setMinorTickSpacing(500);
+        worldSizeSlider.setSnapToTicks(true);
+        worldSizeSlider.setPaintLabels(true);
+        worldSizeSlider.setPaintTicks(true);
+        worldSizeSlider.addChangeListener(this);
+
+        /*
+         * Food spinner and text label
+         */
+        maxFoodLabel = new JLabel();
+        maxFoodLabel.setText(model.maxFoodAmount + " Maximum Food ");
         JPanel maxFoodContainer = new JPanel();
         maxFoodContainer.setLayout(new FlowLayout(FlowLayout.LEFT));
         maxFoodContainer.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-        maxFoodLabel = new JLabel("Max Food (Max 100,000)");
+        //food label
+        maxFoodSpinnerLabel = new JLabel("Desired Max Food Amount");
+        //food spinner
         SpinnerModel maxFoodSpinnerModel = new SpinnerNumberModel(model.desiredMaxFoodAmount, 0, 100000, 10);
         maxFoodSpinner = new JSpinner(maxFoodSpinnerModel);
         maxFoodSpinner.setEditor(new JSpinner.NumberEditor(maxFoodSpinner, "#"));
         maxFoodSpinner.addChangeListener(this);
-
-        maxFoodContainer.add(maxFoodLabel);
+        //add both to container
         maxFoodContainer.add(maxFoodSpinner);
+        maxFoodContainer.add(maxFoodSpinnerLabel);
 
-        // Add components and labels to the right container
+
+        /*
+         * Statistics for averages
+         */
+        averagesStatisticsLabel = new JLabel("Statistics");
+        averageEnergy = new JLabel(Strings.averageEnergyText);
+        averageWeight = new JLabel(Strings.averageWeightText);
+        averageFoodEaten = new JLabel(Strings.averageFoodEatenText);
+        averageNumChildren = new JLabel(Strings.averageNumChildrenText);
+        averageEnergySpentPerFood = new JLabel(Strings.averageEnergySpentPerFoodText);
+        averageAge = new JLabel(Strings.averageAgeText);
+        newestGeneration = new JLabel(Strings.newestGenerationText);
+        
+        /*
+         * Statistics for individual organisms check boxes
+         */
+        bestOrganismStatisticsLabel = new JLabel(Strings.bestOrganismStatisticsLabelText);
+        //
+        box_mostFoodEaten = new JCheckBox(Strings.mostFoodEatenText, view.showGluttony);
+        box_mostFoodEaten.setAlignmentX(Component.LEFT_ALIGNMENT);
+        box_mostFoodEaten.addChangeListener(this);
+        //
+        box_mostChildren = new JCheckBox(Strings.mostChildrenText, view.showLust);
+        box_mostChildren.setAlignmentX(Component.LEFT_ALIGNMENT);
+        box_mostChildren.addChangeListener(this);
+        //
+        box_mostEfficient = new JCheckBox(Strings.mostEfficientText, view.showSloth);
+        box_mostEfficient.setAlignmentX(Component.LEFT_ALIGNMENT);
+        box_mostEfficient.addChangeListener(this);
+        //
+        box_oldest = new JCheckBox(Strings.oldestText, view.showPride);
+        box_oldest.setAlignmentX(Component.LEFT_ALIGNMENT);
+        box_oldest.addChangeListener(this);
+        //
+        box_oldestGeneration = new JCheckBox(Strings.oldestGenerationText, view.showEnvy);
+        box_oldestGeneration.setAlignmentX(Component.LEFT_ALIGNMENT);
+        box_oldestGeneration.addChangeListener(this);
+
+
+        /*
+         * Add components and labels to the right container
+         */
         rightContainer.add(textLabel);
         rightContainer.add(Box.createVerticalStrut(10));
-        rightContainer.add(speedLabel);
-        rightContainer.add(speedSlider);
+        //
+        rightContainer.add(worldSizeLabel);
+        rightContainer.add(worldSizeSliderLabel);
+        rightContainer.add(worldSizeSlider);
+        rightContainer.add(Box.createVerticalStrut(10));
+        //
+        rightContainer.add(averagesStatisticsLabel);
+        rightContainer.add(averageEnergy);
+        rightContainer.add(averageWeight);
+        rightContainer.add(averageFoodEaten);
+        rightContainer.add(averageNumChildren);
+        rightContainer.add(averageEnergySpentPerFood);
+        rightContainer.add(averageAge);
+        rightContainer.add(newestGeneration);
+        rightContainer.add(Box.createVerticalStrut(10));
+        //
+        rightContainer.add(bestOrganismStatisticsLabel);
+        rightContainer.add(box_mostFoodEaten);
+        rightContainer.add(box_mostChildren);
+        rightContainer.add(box_mostEfficient);
+        rightContainer.add(box_oldest);
+        rightContainer.add(box_oldestGeneration);
+        rightContainer.add(Box.createVerticalStrut(10));
+        //
+        rightContainer.add(maxFoodLabel);
         rightContainer.add(maxFoodContainer);
 
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, view, rightContainer);
@@ -201,6 +321,51 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
                         String.format("%02d", controller.minutes) + ":" + 
                         String.format("%02d", controller.seconds);
         textLabel.setText(displayString);
+
+        String widthFormatted = String.format("%.2f", model.width);
+        String heightFormatted = String.format("%.2f", model.height);
+        String labelText = String.format("%s (%s wide, %s high)", Strings.worldSizeLabelText, widthFormatted, heightFormatted);
+        worldSizeLabel.setText(labelText);
+
+        String desiredWidthLabel;
+        if (model.width > (model.desiredWidth + 1.0)) {
+            desiredWidthLabel = "(Shrinking to Desired Width " + String.format("%.2f", model.desiredWidth) + ")";
+        }
+        else if (model.width < (model.desiredWidth - 1.0)) {
+            desiredWidthLabel = "(Expanding to Desired Width " + String.format("%.2f", model.desiredWidth) + ")";
+        }
+        else {
+            desiredWidthLabel = "(Reached Desired Width " + String.format("%.2f", model.desiredWidth) + ")";
+        }
+        worldSizeSliderLabel.setText(Strings.worldSizeSliderLabelText + desiredWidthLabel);
+
+        //TODO max food label changes to reflect what the actual maximum food amount is
+
+        maxFoodLabel.setText(model.maxFoodAmount + " Maximum Food");
+
+        LogElement topLog;
+        try{
+            topLog = statistics.getTopLogElement();
+            averageEnergy.setText(Strings.averageEnergyText + String.format("%.3f", topLog.averageEnergy));
+            averageWeight.setText(Strings.averageWeightText + String.format("%.3f", topLog.averageWeight));
+            averageFoodEaten.setText(Strings.averageFoodEatenText + topLog.averageNumFoodEaten);
+            averageNumChildren.setText(Strings.averageNumChildrenText + topLog.averageNumChildren);
+            averageEnergySpentPerFood.setText(Strings.averageEnergySpentPerFoodText + String.format("%.3f", topLog.averageEnergySpentPerFood));
+            averageAge.setText(Strings.averageAgeText + topLog.averageAge);
+            newestGeneration.setText(Strings.newestGenerationText + topLog.newestGeneration);
+        }catch (Exception e) {
+            //System.out.println("Error with basic statistics labels. Mainwindow { public void update(){}}");
+        }
+        try{
+            box_mostFoodEaten.setText(Strings.mostFoodEatenText + statistics.getTopLogElement().mostNumFoodEaten);
+            box_mostChildren.setText(Strings.mostChildrenText + statistics.getTopLogElement().mostNumChildrenAmount);
+            box_mostEfficient.setText(Strings.mostEfficientText + String.format("%.3f", statistics.getTopLogElement().lowestEnergySpentPerFoodValue));
+            box_oldest.setText(Strings.oldestText + statistics.getTopLogElement().oldestOrganismAge);
+            box_oldestGeneration.setText(Strings.oldestGenerationText + statistics.getTopLogElement().oldestGeneration);
+        } catch (Exception e) {
+            //System.out.println("Error with checkboxes. MainWindow { public void update(){}}");
+        } 
+        //Note: These try-catch blocks throw a lot of errors upon startup because there are no logElements in the statistics object yet FIXME
     }
 
     @Override
@@ -214,6 +379,34 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
             JSpinner source = (JSpinner) e.getSource();
             model.maxFoodAmount = (int) source.getValue();
         }
+
+        else if (e.getSource() == worldSizeSlider) {
+            JSlider source = (JSlider) e.getSource();
+            int value = source.getValue();
+            model.desiredWidth = value;
+        }
+
+        else if (e.getSource() == box_mostFoodEaten) {
+            JCheckBox source = (JCheckBox) e.getSource();
+            view.showGluttony = source.isSelected();
+        }
+        else if (e.getSource() == box_mostChildren) {
+            JCheckBox source = (JCheckBox) e.getSource();
+            view.showLust = source.isSelected();
+        }
+        else if (e.getSource() == box_mostEfficient) {
+            JCheckBox source = (JCheckBox) e.getSource();
+            view.showSloth = source.isSelected();
+        }
+        else if (e.getSource() == box_oldest) {
+            JCheckBox source = (JCheckBox) e.getSource();
+            view.showPride = source.isSelected();
+        }
+        else if (e.getSource() == box_oldestGeneration) {
+            JCheckBox source = (JCheckBox) e.getSource();
+            view.showEnvy = source.isSelected();
+        }
+
     }
 
     public void setSpeedSlider(double d) {

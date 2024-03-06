@@ -15,7 +15,7 @@ public class WorldModel {
     public int ticksPer_FoodSpawn = 1;
     public int foodSpawnedPerEvent = 3;
 
-    public double foodDensity = 0.0009201325; // Needed for calculating expanding / shrinking worlds
+    public double foodDensity = 0.0009201325; // Needed for calculating expanding / shrinking worlds. When the world shrinks or expands, it adjusts the maximum food ammount to match the current density
 
     public static double baseEnergyDepletionRate = 0.4;
     public static double speedEnergyDepletionFactor = 1;
@@ -27,9 +27,10 @@ public class WorldModel {
     public static boolean useLocalMutationRate = false; //if true, then organisms can determin their own mutation rate
     public static double speedFactor = 1;
 
-    public boolean useLifespan = false; //if enabled, will kill organisms and food older than a certain age
-    public int lifespan = 120;
-    public int food_lifespan = 120;
+    public boolean useLifespan = false; //if enabled, will kill organisms older than a certain age
+    public boolean useFoodspoil = true; //if enabled, will kill food older than a certain age
+    public int lifespan = 420;
+    public int food_lifespan = 620; //600 is 200 seconds longer than the typical oldest foods in simulation tests
 
     private final List<BaseOrganism> organisms;
     private final List<Food> foods;

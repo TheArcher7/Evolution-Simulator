@@ -33,6 +33,7 @@ public class HiddenLayer {
         }
     }
 
+    // Initializes the weights and biases with random values between [-1..1)
     private void initRandom() {
         for (int i = 0; i < weights.length; i++) {
             for (int j = 0; j < weights[0].length; j++) {

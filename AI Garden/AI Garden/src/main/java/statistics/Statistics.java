@@ -46,13 +46,13 @@ public class Statistics {
     public int oldestFoodAge;
 
     // Best organisms
-    private BaseOrganism oGluttony; //gluttony (most food eaten)
-    private BaseOrganism oLust; //lust (most children)
-    private BaseOrganism oSloth; //sloth (most efficient traveler)
-    private BaseOrganism oPride; //pride (item collecting not implemented)
-    private BaseOrganism oGreed; //greed (oldest)
-    private BaseOrganism oWrath; //wrath (murder not implemented)
-    private BaseOrganism oEnvy; //envy (oldest generation)
+    private BaseOrganism oGluttony; //most food eaten
+    private BaseOrganism oLust;     //most children
+    private BaseOrganism oSloth;    //most efficient traveler
+    private BaseOrganism oPride;    //oldest
+    private BaseOrganism oGreed;    //pride (item collecting not implemented)
+    private BaseOrganism oWrath;    //wrath (murder not implemented)
+    private BaseOrganism oEnvy;     //oldest generation
 
     public Statistics(WorldModel worldModel) {
         this.worldModel = worldModel;
@@ -75,7 +75,7 @@ public class Statistics {
         CountDownLatch calculationLatch = new CountDownLatch(4);
 
         for (BaseOrganism o : worldModel.getOrganisms())
-            o.isBestOrganism = false;
+            o.resetStatusToFalse();
 
         executor.submit(() -> {
             try {
@@ -120,13 +120,13 @@ public class Statistics {
             recordNewStatElement();
 
             // Mark the best performing organisms
-            try{oGluttony.isBestOrganism = true;} catch (Exception e){} finally {}
-            try{oLust.isBestOrganism = true;} catch (Exception e){} finally {}
-            try{oSloth.isBestOrganism = true;} catch (Exception e){} finally {}
-            try{oPride.isBestOrganism = true;} catch (Exception e){} finally {}
-            try{oGreed.isBestOrganism = true;} catch (Exception e){} finally {}
-            try{oWrath.isBestOrganism = true;} catch (Exception e){} finally {}
-            try{oEnvy.isBestOrganism = true;} catch (Exception e){} finally {}
+            try{oGluttony.isBestOrganism = true; oGluttony.gluttony = true;} catch (Exception e){} finally {}
+            try{oLust.isBestOrganism = true; oLust.lust = true;} catch (Exception e){} finally {}
+            try{oSloth.isBestOrganism = true; oSloth.sloth = true;} catch (Exception e){} finally {}
+            try{oPride.isBestOrganism = true; oPride.pride = true;} catch (Exception e){} finally {}
+            try{oGreed.isBestOrganism = true; oGreed.greed = true;} catch (Exception e){} finally {}
+            try{oWrath.isBestOrganism = true; oWrath.wrath = true;} catch (Exception e){} finally {}
+            try{oEnvy.isBestOrganism = true; oEnvy.envy = true;} catch (Exception e){} finally {}
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             e.printStackTrace();
@@ -213,7 +213,7 @@ public class Statistics {
             averageNumChildren += o.numChildren;
             if (o.age > oldestOrganismAge) {
                 oldestOrganismAge = o.age;
-                oGreed = o;
+                oPride = o;
             }
             if (o.generation < oldestGeneration) {
                 oldestGeneration = o.generation;

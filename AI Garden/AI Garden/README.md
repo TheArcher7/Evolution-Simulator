@@ -1,6 +1,6 @@
 ## Getting Started
 
-Welcome to the AI Garden, an evolution simulator that trains AI to live and evolve in this world by natural selection.
+Welcome to the AI Garden, an evolution simulator.
 This project was created by Micah Mock as a capstone project for CSU Global in Spring of 2024
 
 Micah Mock

@@ -9,7 +9,15 @@ import javax.swing.*;
 import java.awt.*;
 
 public class WorldView extends JPanel{
-    public static boolean DEBUG_MODE = true;
+    public boolean DEBUG_MODE = true;
+
+    public boolean showGluttony = false;
+    public boolean showLust = false;
+    public boolean showSloth = false;
+    public boolean showPride = false;
+    public boolean showGreed = false;
+    public boolean showWrath = false;
+    public boolean showEnvy = false;
 
     private WorldModel world;
 
@@ -61,7 +69,13 @@ public class WorldView extends JPanel{
                 g.setColor(Color.BLUE);
                 drawHitbox(g, organism.hitbox);
                 g.setColor(Color.RED);
-                if(organism.isBestOrganism)
+                if( (showGluttony && organism.gluttony)
+                    || (showLust && organism.lust)
+                    || (showSloth && organism.sloth)
+                    || (showPride && organism.pride)
+                    || (showGreed && organism.greed)
+                    || (showWrath && organism.wrath)
+                    || (showEnvy && organism.envy))
                     g.setColor(Color.BLACK);
                 drawVisionLines(g, X, Y, organism.visionPoints);
 
@@ -76,7 +90,13 @@ public class WorldView extends JPanel{
             g.fillOval( X - R, Y - R, 2 * R, 2 * R);
 
             // Draw the outtermost and center vision lines
-            if(organism.isBestOrganism)
+            if((showGluttony && organism.gluttony)
+                || (showLust && organism.lust)
+                || (showSloth && organism.sloth)
+                || (showPride && organism.pride)
+                || (showGreed && organism.greed)
+                || (showWrath && organism.wrath)
+                || (showEnvy && organism.envy))
                     g.setColor(Color.BLACK);
             drawVisionLines(g, X, Y, 
                 new Pos[]{
@@ -140,4 +160,13 @@ public class WorldView extends JPanel{
     public void setWorld(WorldModel worldModel) {
         this.world = worldModel;
     }
+
+    // Method to toggle the value of seven sins
+    public void toggleShowGluttony() {showGluttony = !showGluttony;}
+    public void toggleShowLust() {showLust = !showLust;}
+    public void toggleShowSloth() {showSloth = !showSloth;}
+    public void toggleShowPride() {showPride = !showPride;}
+    public void toggleShowGreed() {showGreed = !showGreed;}
+    public void toggleShowWrath() {showWrath = !showWrath;}
+    public void toggleShowEnvy() {showEnvy = !showEnvy;}
 }

@@ -70,7 +70,7 @@ public class WorldController {
             if (seconds > 58) { //Triggers every 1 minute
                 minutes++;
                 seconds = 0;
-                System.out.println("Width:" + worldModel.width + " Height:" + worldModel.height);
+                //System.out.println("Width:" + worldModel.width + " Height:" + worldModel.height);
                 //TODO check if there are organisms in the system. If there are none, then terminate gracefully or restart the simulation either from checkpoint or from new.
                 changeWorldFoodEnergy();
 
@@ -90,7 +90,7 @@ public class WorldController {
                     //starting with a mutation strength of 0.1, after 10 hours, the strength will be 0.034867
                 } //1 hour
                 
-                statistics.print();
+                //statistics.print();
             } //1 minute
 
             statistics.update(executor); // log world statistics
@@ -317,7 +317,7 @@ public class WorldController {
             if (food.value < 1) {
                 foodIterator.remove();
             }
-            else if (worldModel.useLifespan && food.age > worldModel.food_lifespan) {
+            else if (worldModel.useFoodspoil && food.age > worldModel.food_lifespan) {
                 foodIterator.remove();
             }
         }
@@ -360,18 +360,20 @@ public class WorldController {
         }
     }
 
-    // Expand / shrink world over time
+    /**
+     * Expand or shrink the world. Depends on the desiredWidth attribute defined in the worldModel.
+     */
     public void changeWorldArea(){
         //System.out.println("Changing world area size"); //Debug
         if (worldModel.width < worldModel.desiredWidth){
-            worldModel.width += 1.75;
-            worldModel.height += 1;
+            worldModel.width += 1.0;
+            worldModel.height += 0.75;
 
             worldModel.maxFoodAmount = (int) ((worldModel.width * worldModel.height) * worldModel.foodDensity);
         }
         else if (worldModel.width > worldModel.desiredWidth){
-            worldModel.width -= 1.75;
-            worldModel.height -= 1;
+            worldModel.width -= 2;
+            worldModel.height -= 1.5;
 
             worldModel.maxFoodAmount = (int) ((worldModel.width * worldModel.height) * worldModel.foodDensity);
         }
@@ -479,5 +481,16 @@ public class WorldController {
 
     public void addOrganism(BaseOrganism o) {
         worldModel.addOrganism(o);
+    }
+
+    public void toggleDebugMode(){
+        if (worldView.DEBUG_MODE) {
+            worldView.DEBUG_MODE = false;
+            System.out.println("Debug disabled");
+        }
+        else {
+            worldView.DEBUG_MODE = true;
+            System.out.println("Debug enabled");
+        }
     }
 }
