@@ -125,4 +125,8 @@ public class WorldFactory {
 
         return world;
     }
+
+    public static BaseOrganism generateRandOrganism(WorldModel world) {
+        return new BaseOrganism(new Pos(world.width / 2, world.height / 2), world);
+    }
 }

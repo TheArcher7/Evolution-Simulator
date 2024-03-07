@@ -38,7 +38,7 @@ public class BaseOrganism {
     public double[] phiVisionDirection; // the offset in degrees from the thetaDirection for each vision line
     public double visionRadius; // the distance the vision lines extend from the organism
     public Pos[] hitbox;
-    public Pos[] visionPoints;
+    public Pos[] visionPoints; //TODO create a method for setting new visionPoints. It must adjust the neural network
 
     // Attributes for graphics and statistics
     public double size = 1;
@@ -188,7 +188,7 @@ public class BaseOrganism {
         // set the attributes of the new child organism according to the primary parent
         Pos p = new Pos(position.xCoord, position.yCoord);
         BaseOrganism newborn = new BaseOrganism(p, ai.model);
-        newborn.phiVisionDirection = this.phiVisionDirection;
+        newborn.phiVisionDirection = this.phiVisionDirection; //TODO setting new visionDirection should always call resetVisionPoints. create a method
         newborn.resetVisionPoints();
         newborn.generation = generation + 1;
         numChildren++;
@@ -214,7 +214,7 @@ public class BaseOrganism {
             //newbornAI.setOrganismSelf(newborn);
             //newborn.ai = newbornAI;
 
-            //NeuralNetwork nnn = ai.neuralNetwork.crossover(otherParent.ai.neuralNetwork); //FIXME doesn't work
+            //NeuralNetwork nnn = ai.neuralNetwork.crossover(otherParent.ai.neuralNetwork); //FIXME doesn't work. will definitely not work with neural networks of different sizes
             NeuralNetwork nn = new NeuralNetwork(ai.neuralNetwork);
             nn.mutate(ai.model.mutationRate, ai.model.mutationStrength);
             newborn.ai.setNeuralNetwork(nn);

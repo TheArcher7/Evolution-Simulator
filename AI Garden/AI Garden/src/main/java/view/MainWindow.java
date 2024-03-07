@@ -21,6 +21,7 @@ import main.java.statistics.LogElement;
 import main.java.statistics.Statistics;
 import main.java.util.FileLoader;
 import main.java.util.Strings;
+import main.java.util.WorldFactory;
 
 public class MainWindow extends JFrame implements ActionListener, ChangeListener {
     private WorldView view;
@@ -289,11 +290,15 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
 
         // World menu (loading from file and generating)
         worldMenu = new JMenu("World");
+        // Pause Play
+        pausePlay = new JMenuItem("Pause/Resume");
+        pausePlay.addActionListener(this);
+        worldMenu.add(pausePlay);
+        worldMenu.addSeparator();
         // Create Organism
-        createOrganism = new JMenuItem("Create Randomized Organism");
+        createOrganism = new JMenuItem("Create Random Organism");
         createOrganism.addActionListener(this);
         worldMenu.add(createOrganism);
-        worldMenu.addSeparator();
         // Load Organism
         loadOrganismFromFile = new JMenuItem("Load Organism From File");
         loadOrganismFromFile.addActionListener(this);
@@ -308,13 +313,9 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
         clearOrganisms.addActionListener(this);
         worldMenu.add(clearOrganisms);
         // Clear world food
-        clearFood = new JMenuItem("Clear Food");
-        clearFood.addActionListener(this);
-        worldMenu.add(clearFood);
-        // Pause Play
-        pausePlay = new JMenuItem("Pause/Resume");
-        pausePlay.addActionListener(this);
-        worldMenu.add(pausePlay);
+        //clearFood = new JMenuItem("Clear Food");
+        //clearFood.addActionListener(this);
+        //worldMenu.add(clearFood);
 
         
         // Statistics Menu
@@ -485,9 +486,7 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
         
         
         else if (e.getSource() == createOrganism) {
-            //new CreateCreatureView(controller, worldModel.getWidth(), worldModel.getHeight());
-            // TODO create a random organism, preferably in the center of the screen to allow for user "placement"
-            System.out.println("Create organism button clicked");
+            controller.addOrganism(WorldFactory.generateRandOrganism(model));
         } 
 
         else if (e.getSource() == loadOrganismFromFile) {
@@ -510,12 +509,11 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
         }
 
         else if (e.getSource() == clearOrganisms) {
-            System.out.println("Clear organisms button clicked");
             controller.clearOrganisms();
         }
 
         else if (e.getSource() == clearFood) { //TODO maybe replace with a restart world command
-            System.out.println("Clear food button clicked");
+            System.out.println("Clear food button clicked. Not Implemented");
         }
 
         else if (e.getSource() == pausePlay) {
@@ -523,7 +521,7 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
         }
 
         else if (e.getSource() == loadWorldFromFile) {
-            System.out.println("Load world from file button clicked");
+            System.out.println("Load world from file button clicked. Not Implemented");
         }
 
         else if (e.getSource() == showStatisticsItem) {
