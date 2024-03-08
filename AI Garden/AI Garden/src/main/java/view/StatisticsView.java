@@ -121,7 +121,7 @@ public class StatisticsView extends JFrame implements ActionListener {
     private JFreeChart createChart(final XYDataset dataset, List<Color> colors) {
         final JFreeChart chart = ChartFactory.createXYLineChart(
                 "Statistics",
-                "Time",
+                "Time (Seconds)",
                 "Value",
                 dataset,
                 PlotOrientation.VERTICAL,

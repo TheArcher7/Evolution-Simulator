@@ -4,9 +4,13 @@ Welcome to the AI Garden, an evolution simulator.
 This project was created by Micah Mock as a capstone project for CSU Global in Spring of 2024
 
 Micah Mock
+
 Colorado State University Global
+
 CSC 480 Comupter Science Capstone
+
 Professor Chintan Thakkar
+
 Spring 2024
 
 Contact Info:
@@ -24,7 +28,7 @@ Meanwhile, the compiled output files will be generated in the `bin` folder by de
 
 ## Dependency Management
 
-Check the github (TODO add github link)
+Github link: https://github.com/TheArcher7/Evolution-Simulator/tree/temp-branch/AI%20Garden/AI%20Garden
 
 ## Project Documentation
 
